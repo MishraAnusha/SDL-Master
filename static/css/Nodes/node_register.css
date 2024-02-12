@@ -1,0 +1,84 @@
+.main
+{
+  padding: 0% 5%;
+}
+h3
+{
+  font-weight: bold;
+}
+.header
+{
+  padding-bottom: 1%;
+}
+.ff{
+    display: flex;
+    flex-grow: 1;
+}
+.form-content
+{
+  width: 100%;
+  padding: 2%;
+  background-color: white;
+  margin: 2% 1%;
+  box-shadow: 5px 5px rgb(203, 193, 193);
+  border-radius: 5%;
+  
+}
+label
+{
+  padding-top: 2%;
+  font-weight: bold;
+}
+.btn{
+background-color: black;
+  color: white;
+  border-radius: 2%;
+  font-weight: bold;
+  margin-top: 2%;
+}
+.btn:hover{
+  background-color: rgb(71, 191, 87);
+  color: white;
+}
+.row
+{
+    margin: 0;
+}
+span :first-child{
+    top:10px;
+    left: 0;
+
+}
+.flex-container
+{
+  display: flex;
+}
+.flex-container .form-group
+{
+  flex: 50%;
+  padding-right: 1%;
+}
+.inner-container
+{
+  display: flex;
+}
+@media (max-width: 600px)
+{
+  .header
+  {
+    padding-bottom: 1%;
+    margin-top: 3%;
+  }
+  .form-content
+  {
+    box-shadow: none;    
+  }
+  .btn
+  {
+    margin-top: 3%;
+  }
+  .flex-container
+  {
+    flex-direction: column;
+  }
+}

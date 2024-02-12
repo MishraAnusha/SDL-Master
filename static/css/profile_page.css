@@ -1,0 +1,100 @@
+.main
+{
+    display: flex;
+    padding: 2% 5%;
+    flex-direction: column;
+}
+h3
+{
+    font-weight: bold;
+}
+.container
+{
+    display: flex;
+    padding: 2%;
+    background-color: white;
+    box-shadow: 5px 5px rgb(203, 193, 193);
+    border-radius: 5%;
+    justify-content: space-between;
+}
+label
+{
+    padding-top: 2%;
+    font-weight: bold;
+}
+.btn
+{
+  background-color: black;
+    color: white;
+    border-radius: 2%;
+    font-weight: bold;
+    margin-top: 1%;
+}
+.btn:hover{
+    background-color: rgb(71, 191, 87);
+    color: white;
+  }
+.imgpt
+{
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+.imgp
+{
+    /* margin-top: 1%; */
+    text-align: center;
+    flex-grow: 1;
+}
+.ff
+{
+    padding-right: 5%;
+}
+.form-content
+{
+    float: left;
+    flex-grow: 1;
+    padding: 0% 3%;
+}
+.flex-container
+{
+    display: flex;
+}
+.flex-container .form-group 
+{
+    flex-grow: 1;
+}
+.li
+{
+    padding-left: 1%;
+}
+.btn-container
+{
+    display: flex;
+    justify-content:safe;
+    margin-top: 2%;
+}
+.btn-container .btn
+{
+    margin-right: 2%;
+}
+.image-preview
+{
+  width:200px;
+  height: 150px;
+  padding-top: 0.2%;
+}
+@media (max-width: 600px)
+{
+    .container
+    {
+        flex-direction: column;
+        box-shadow: none;
+    }
+    .imgpt
+    {
+        height: 60%;
+        width: 50%;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Data to H/W</title>
+  </head>
+  <body>
+    <h1>Send Data to H/W</h1>
+    <form
+      id="parameter-form"
+      action="{% url 'process_parameters' %}"
+      method="post"
+    >
+      {% csrf_token %}
+      <label for="mvp">MVP:</label>
+      <input type="text" id="mvp" name="mvp" /><br /><br />
+
+      <label for="mvs">MVS:</label>
+      <input type="text" id="mvs" name="mvs" /><br /><br />
+
+      <button type="submit">Send</button>
+    </form>
+    <script>
+      document
+        .getElementById("parameter-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          var formData = new FormData(this);
+
+          fetch(this.action, {
+            method: this.method,
+            body: formData,
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert("Data sent successfully");
+                document.getElementById("parameter-form").reset();
+              } else {
+                alert("Error occurred while sending data");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Error occurred while sending data");
+            });
+        });
+    </script>
+  </body>
+</html>

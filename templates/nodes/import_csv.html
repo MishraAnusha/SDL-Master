@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block title %} Import data to node {% endblock title %}
+{% block content %}
+    <style>
+  .main
+  {
+    padding: 0% 5%;
+  }
+  h3
+  {
+    font-weight: bold;
+  }
+  .header
+  {
+    padding-bottom: 1%;
+  }
+  .form-content
+  {
+    padding: 2%;
+    background-color: white;
+    margin: 2% 1%;
+    box-shadow: 5px 5px rgb(203, 193, 193);
+    border-radius: 5%;
+
+}
+label
+{
+    padding-top: 2%;
+    font-weight: bold;
+}
+.btn
+{
+  background-color: black;
+    color: white;
+    border-radius: 2%;
+    font-weight: bold;
+    margin-top: 1%;
+}
+.btn:hover{
+    background-color: rgb(71, 191, 87);
+    color: white;
+  }
+.upload-container {
+    position: relative;
+}
+.upload-container input {
+    border: 1px solid rgb(71, 191, 87);
+    background: white;
+    outline: 2px dashed rgb(71, 191, 87);
+    outline-offset: -10px;
+    padding: 3%;
+    text-align: center;
+    width: 100%;
+}
+
+.upload-container input:hover {
+    background: rgb(227, 252, 232);
+}
+
+.upload-container:before {
+    position: absolute;
+    bottom: 1rem;
+    left: 2rem;
+    content: "(or) Drag and Drop files here. ";
+    color: rgb(71, 191, 87);
+    font-weight: bold;
+}
+canvas
+{
+  margin-top: 2%;
+}
+/* table {
+  border-collapse: collapse;
+  border-radius: 5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  font-family: "Quicksand", sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+thead {
+  background: rgb(71, 191, 87);
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+th,
+td {
+  padding: 10px 20px;
+}
+
+tr:nth-child(even) {
+  background: #eeeeee;
+} */
+@media (max-width: 1025px)
+{
+  .upload-container:before
+  {
+    display: none;
+  }
+  .upload-container input {
+    border: 0;
+    background: white;
+    outline: 0;
+    outline-offset: 0;
+    padding: 0;
+}
+.form-content
+{
+  margin-top: 3%;
+  padding: 5%;
+  box-shadow: none;
+  border-radius: 0;
+}
+.btn
+{
+    margin-top: 3%;
+}
+}
+@media (max-width: 950px)
+{
+    /* .table thead
+    {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td
+    {
+        display: block;
+        width: 100%;
+    }
+    .table tr
+    {
+        border: 1px solid black;
+        margin-bottom: 10%;
+    }
+    .table tbody tr td
+    {
+        text-align: right;
+        position: relative;
+        border: 0;
+        padding-right: 5%;
+    }
+    .table td:before
+    {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        font-weight: bold;
+        text-align: left;
+        padding-left: 5%;
+    } */
+    .btn
+    {
+        padding: 5px 9px;
+        text-align: center;
+    }
+    .row
+    {
+        margin-bottom: 3%;
+    }
+}
+</style>
+    <div class="main">
+        <div class="form-content">
+            <div class="header"><h3>Import CSV</h3></div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="small mb-1">CSV File:</label>
+                              <div class="upload-container">
+                                  {{ form.csv_file }}
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Upload</button>
+                </form>
+            </div>
+            <div class="csvPreview">
+              <h6>Graphical View Of Choosen CSV:</h6>
+              <div id="csvChart">
+              </div>
+              <!-- <h6>Choosen CSV File:</h6>
+              <table id="csvRoot" class="table"></table> -->
+              {% load static %}
+              <script type="module" src="{% static 'js/main.js' %}"></script>
+            </div>
+    </div>
+{% endblock content %}
+
+//main for table preview
+{#<div class="main">#}
+{#        <div class="form-content">#}
+{#            <div class="header"><h3>Import CSV</h3></div>#}
+{#                <form method="post" enctype="multipart/form-data">#}
+{#                    {% csrf_token %}#}
+{#                    <div class="row">#}
+{#                        <div class="col-md-12">#}
+{#                          <div class="form-group">#}
+{#                            <label class="small mb-1">CSV File:</label>#}
+{#                              <div class="upload-container">#}
+{#                                  {{ form.csv_file }}#}
+{#                              </div>#}
+{#                          </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <button type="submit" class="btn">Upload</button>#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="csvPreview">#}
+{#              <h6>Choosen CSV File:</h6>#}
+{#              <table id="csvRoot" class="table"></table>#}
+{#              {% load static %}#}
+{#              <script type="module" src="{% static 'js/main.js' %}"></script>#}
+{#            </div>#}
+{#    </div>#}

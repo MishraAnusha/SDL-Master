@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% load static %} {% block title %} Nodes {% endblock
+title %} {% block content %}
+<style>
+  canvas {
+    padding-bottom: 2%;
+  }
+  h6 {
+    font-weight: bold;
+    padding-top: 2%;
+  }
+</style>
+<div class="main" style="padding: 2% 5%">
+  <h3 style="font-weight: bold">Node : {{ node.name }}</h3>
+  <div class="row">
+    <h6 align="center">Temperature</h6>
+    <div
+      class="MyCanvas1"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart1" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  <div class="row">
+    <h6 align="center">Humidity</h6>
+    <div
+      class="MyCanvas2"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart2" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  <div class="row">
+    <h6 align="center">LWS</h6>
+    <div
+      class="MyCanvas3"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart3" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  <div class="row">
+    <h6 align="center">Soil Temperature</h6>
+    <div
+      class="MyCanvas4"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart4" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  <div class="row">
+    <h6 align="center">Soil Moisture</h6>
+    <div
+      class="MyCanvas5"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart5" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  <div class="row">
+    <h6 align="center">Battery Status</h6>
+    <div
+      class="MyCanvas6"
+      style="height: 100%; width: 100%; background-color: white"
+    >
+      <canvas id="myChart6" style="width: auto; height: auto">CanVas </canvas>
+    </div>
+  </div>
+  {% endblock content %} {% block script %}
+  <script>
+    get_chart_data({ node_id });
+  </script>
+  {% endblock script %}
+</div>

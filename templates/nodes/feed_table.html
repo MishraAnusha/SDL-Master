@@ -1,0 +1,128 @@
+{% extends "base.html" %} {% load static %}
+<title>{% block title %} Nodes {% endblock %}</title>
+{% block htmlhead %} {% load static %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'css/all_Users.css' %}"
+/>
+{% endblock htmlhead %} {% block content %}
+<style>
+  @media (max-width: 1300px) {
+    .table thead {
+      display: none;
+    }
+
+    .table,
+    .table tbody,
+    .table tr,
+    .table td {
+      display: block;
+      width: 100%;
+    }
+    .table tr {
+      border: 1px solid black;
+      margin-bottom: 10%;
+    }
+    .table tbody tr td {
+      text-align: right;
+      position: relative;
+      border: 0;
+      padding-right: 5%;
+    }
+    .table td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0;
+      width: 50%;
+      font-weight: bold;
+      text-align: left;
+      padding-left: 5%;
+    }
+    .btn {
+      padding: 5px 9px;
+      text-align: center;
+    }
+    .row {
+      margin-bottom: 3%;
+    }
+  }
+</style>
+<div class="main">
+  <h3 style="padding-bottom: 1%">Node : {{ node.name }}</h3>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Node_ID</th>
+          <th>Temperature</th>
+          <th>Humidity</th>
+          <th>Soil Temperature</th>
+          <th>Soil Moisture</th>
+          <th>LWS</th>
+          <th>Duration</th>
+          <th>Battery</th>
+          <th>MVP</th>
+          <th>MVS</th>
+          <th>SVP</th>
+          <th>SVS</th>
+          <th>RO_1</th>
+          <th>RO_2</th>
+          <th>Powdery Mildew</th>
+          <th>Anthracnose</th>
+          <th>Root Rot</th>
+          <th>Irrigation</th>
+          <th>Created_At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in data %}
+        <tr>
+          <td data-label="ID">{{ i.id }}</td>
+          <td data-label="Node_ID">{{ i.node_id }}</td>
+          <td data-label="Temperature">{{ i.temperature }}</td>
+          <td data-label="Humidity">{{ i.humidity }}</td>
+          <td data-label="Soil Temperature">{{ i.soil_temperature }}</td>
+          <td data-label="Soil Moisture">{{ i.soil_moisture }}</td>
+          <td data-label="LWS">{{ i.LWS }}</td>
+          <td data-label="Duration">{{ i.duration }}</td>
+          <td data-label="Battery">{{ i.battery_status }}</td>
+          <td
+            data-label="MVP"
+            class="dot {% if i.MVP == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td
+            data-label="MVS"
+            class="dot {% if i.MVS == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td
+            data-label="SVP"
+            class="dot {% if i.SVP == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td
+            data-label="SVS"
+            class="dot {% if i.SVS == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td
+            data-label="RO_1"
+            class="dot {% if i.RO_1 == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td
+            data-label="RO_2"
+            class="dot {% if i.RO_2 == 1 %}green{% else %}red{% endif %}"
+          ></td>
+          <td data-label="Powdery Mildew">{{ i.powdery_mildew }}</td>
+          <td data-label="Anthracnose">{{ i.anthracnose }}</td>
+          <td data-label="Root Rot">{{ i.root_rot }}</td>
+          <td data-label="Irrigation">{{ i.irrigation }}</td>
+          <td data-label="Created_At">
+            {{ i.created_at | date:"M d, Y H:i:s" }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% include "pagination.html" %} {% endblock content %}

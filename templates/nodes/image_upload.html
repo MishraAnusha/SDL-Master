@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %} Crop Image Upload {% endblock title %}
+{% block content %}
+<style>
+  .main
+  {
+    padding: 0% 5%;
+  }
+  h3
+  {
+    font-weight: bold;
+  }
+  .header
+  {
+    padding-bottom: 1%;
+  }
+  .form-content
+  {
+    padding: 2%;
+    background-color: white;
+    margin: 2% 1%;
+    box-shadow: 5px 5px rgb(203, 193, 193);
+    border-radius: 5%;
+
+}
+label
+{
+    padding-top: 2%;
+    font-weight: bold;
+}
+.btn
+{
+    background-color: black;
+    color: white;
+    border-radius: 2%;
+    font-weight: bold;
+    margin-top: 1%;
+}
+.btn:hover{
+    background-color: rgb(71, 191, 87);
+    color: white;
+  }
+.upload-container {
+    position: relative;
+}
+.upload-container input {
+    border: 1px solid rgb(71, 191, 87);
+    background: white;
+    outline: 2px dashed rgb(71, 191, 87);
+    outline-offset: -10px;
+    padding: 3%;
+    text-align: center;
+    width: 100%;
+}
+
+.upload-container input:hover {
+    background: rgb(227, 252, 232);
+}
+
+.upload-container:before {
+    position: absolute;
+    bottom: 1rem;
+    left: 2rem;
+    content: "(or) Drag and Drop files here. ";
+    color: rgb(71, 191, 87);
+    font-weight: bold;
+}
+.image-preview
+{
+  width:200px;
+  height: 150px;
+  padding-top: 0.2%;
+}
+
+@media (max-width: 1025px)
+{
+  .upload-container:before
+  {
+    display: none;
+  }
+  .upload-container input {
+    border: 0;
+    background: white;
+    outline: 0;
+    outline-offset: 0;
+    padding: 0;
+}
+.form-content
+{
+  margin-top: 3%;
+  padding: 5%;
+  box-shadow: none;
+  border-radius: 0;
+}
+.btn
+{
+    margin-top: 3%;
+}
+}
+</style>
+<div class="main">
+  <div class="form-content">
+    <div class="header"><h3>Upload Crop Image</h3></div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+          <div class="form-group">
+            <label>Crop Image:</label>
+              <div class="upload-container">
+                  {{ form.image }}
+              </div>
+              <div id="preview"></div>
+          <script>
+              const input = document.getElementById('id_image');
+              const preview = document.getElementById('preview');
+              input.addEventListener('input', () => {
+                  const url = URL.createObjectURL(input.files[0]);
+                  const img = document.createElement('img');
+                  const l = document.createElement('label');
+                  const b = document.createElement('br');
+                  l.textContent = "Choosen image:";
+                  img.src = url;
+                  img.className = "image-preview";
+                  preview.innerHTML="";
+                  preview.appendChild(l);
+                  preview.appendChild(b);
+                  preview.appendChild(img);
+              }
+              );
+          </script>
+          </div>
+      </div>
+      <div class="row">
+          <div class="form-group">
+            <label>Description:</label>
+            {{ form.description }}
+          </div>
+      </div>
+      <button type="submit" class="btn">Save</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

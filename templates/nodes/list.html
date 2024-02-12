@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %} Nodes {% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/Nodes/list.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+    <div class="main">
+        <div class="row header">
+            <div class="col-6">
+                <h3>Nodes</h3>
+            </div>
+            <div class="col-6 text-end">
+                <a href="crud?user_id={{ user_id }}" class="btn btnadd">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="row mt-0">
+            {% for val in data %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100"
+                            {% if val.status %}
+                         style="background-color:rgba(152,251,152,0.2); margin: 5px;border-radius: 3%"
+                            {% else %}
+                         style="background-color:rgba(108,117,125,0.15); margin: 5px;border-radius: 3%"
+                            {% endif %}
+                    >
+                        <div class=" card-body">
+                            <h5 class="card-title">
+                                {{ val.id }} : {{ val.name }}
+                                <span class="float-end">
+                                  {% if val.status %}
+                                      <i class="fa-solid fa-circle" style="color: green"></i>
+                                  {% else %}
+                                      <i class="fa-solid fa-circle" style="color: #6c757d"></i>
+                                  {% endif %}
+                                </span>
+                            </h5>
+                            <p class=" card-text">{{ val.description }}</p>
+
+                            <div class="row">
+                            <div class="col-6">
+                                <p class="card-text">
+                                    <strong>Latitude:</strong><br> {{ val.latitude }}
+                                </p>
+                                <p class="card-text">
+                                    <strong>Longitude:</strong><br> {{ val.longitude }}
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text">
+                                    <strong>Last Entry:</strong><br> {{ val.last_feed_time | date:"M d, Y" }}
+                                </p>
+                                <p class="card-text">
+                                    <strong>ThingSpeak:</strong><br> {{ val.thing_speak_fetch }}
+                                </p>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <a href="get_feeds_chart/{{ val.id }}" class="col-3 btn transparent_btn" title="Chart">
+                                    <i class="fa fa-line-chart"></i>
+                                </a>
+                                <a href="get_feeds_table/{{ val.id }}" class="col-3 btn transparent_btn" title="Table">
+                                    <i class="fa fa-table"></i>
+                                </a>
+                                <a href="export_feeds_csv/{{ val.id }}" class="col-3 btn transparent_btn" title="Export CSV">
+                                    <i class="fa-solid fa-file-csv"></i>
+                                </a>
+                                <a href="crop_image_gallery/{{ val.id }}" class="col-3 btn transparent_btn" title="Crop Gallery">
+                                    <i class="fa-solid fa-image"></i>
+                                </a></div>
+                            <div class="row">
+                                <a href="upload_image/{{ val.id }}" class="col-3 btn transparent_btn" title="Upload Crop Image">
+                                    <i class="fa-solid fa-upload"></i>
+                                </a>
+                                <a href="crud?id={{ val.id }}" class="col-3 btn transparent_btn" title="Edit Node">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="import-csv/{{ val.id }}" class="col-3 btn transparent_btn" title="Import CSV">
+                                    <i class="fa-solid fa-file-import"></i>
+                                </a>
+                                <a href="#" class="delete col-3 btn transparent_btn"
+                                   data-id={{ val.id }} data-name={{ val.name }} title="Delete Node">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            // Delete
+            $('.delete').click(function () {
+                const el = this;
+
+                // Delete id
+                const delete_id = $(this).data('id');
+                const node_name = $(this).data('name')
+                console.log(node_name)
+                //{#console.log(deleteid);#}
+                // Confirm box
+                bootbox.confirm("Do you really want to delete Node : " + node_name + " ? <br> It will delete all data permanently", function (result) {
+
+                    if (result) {
+                        // AJAX Request
+                        window.location = 'delete_node/' + delete_id;
+                    }
+
+                });
+
+            });
+        });
+    </script>
+{% endblock script %}

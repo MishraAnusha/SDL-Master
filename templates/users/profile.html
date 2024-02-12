@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Profile Page{% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/profile_page.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+<div class="main">
+  <h3>Your Profile</h3>
+    <div class="container">
+          <div class="imgp">
+            <img
+                class="rounded-circle account-img imgpt"
+                src="{{ user.profile.avatar.url }}"
+                alt="User Profile Picture"/>
+            {#    {{ user.profile.avatar.url }}#}
+          </div>
+            <div class="form-content">
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-row">
+                      <div class="form-group">
+                        <div class="flex-container">
+                          <div class="form-group">
+                            <label class="small mb-1">First Name</label>
+                            {{ user_form.first_name }}
+                            {% if user_form.first_name.errors %}
+                              <div class="alert alert-danger alert-dismissible" role="alert">
+                                <div id="form_errors">
+                                  <strong>{{ user_form.first_name.errors }}</strong>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                </button>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <div class="form-group li">
+                            <label class="small mb-1">Last Name</label>
+                            {{ user_form.last_name }}
+                            {% if user_form.last_name.errors %}
+                              <div class="alert alert-danger alert-dismissible" role="alert">
+                                <div id="form_errors">
+                                  <strong>{{ user_form.last_name.errors }}</strong>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                </button>
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                            <div class="form-group">
+                              <label class="small mb-1">Username:</label>
+                              {{ user_form.username }}
+                              {% if user_form.username.errors %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                  <div id="form_errors">
+                                    <strong>{{ user_form.username.errors }}</strong>
+                                  </div>
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                  </button>
+                                </div>
+                              {% endif %}
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1">Email:</label>
+                              {{ user_form.email }}
+                              {% if user_form.email.errors %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                  <div id="form_errors">
+                                    <strong>{{ user_form.email.errors }}</strong>
+                                  </div>
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                  </button>
+                                </div>
+                              {% endif %}
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1">Change Avatar:</label>
+                              {{ profile_form.avatar }}
+                              <div id="preview"></div>
+                                  <script>
+                                      const input = document.getElementById('id_avatar');
+                                      const preview = document.getElementById('preview');
+                                      input.addEventListener('input', () => {
+                                          const url = URL.createObjectURL(input.files[0]);
+                                          const img = document.createElement('img');
+                                          const l = document.createElement('label');
+                                          const b = document.createElement('br');
+                                          l.textContent = "Choosen image:";
+                                          img.src = url;
+                                          img.className = "image-preview";
+                                          preview.innerHTML="";
+                                          preview.appendChild(l);
+                                          preview.appendChild(b);
+                                          preview.appendChild(img);
+                                      }
+                                      );
+                                  </script>
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1">Bio:</label>
+                              {{ profile_form.bio }}
+                            </div>
+                      </div>
+                    <div class="btn-container">
+                      <button type="submit" class="btn">Save</button>
+                      <button type="reset" class="btn">Reset</button>
+                      <a href="{% url 'password_change' %}" class="btn">Change Password</a>
+                    </div>
+                  </div>
+                </form>
+            </div>
+    </div>
+  </div>
+{% endblock content %}

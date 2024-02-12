@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %} Crop Image Gallery {% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/Nodes/image_gallery.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+    <div class="main">
+        <h3>{{ node.name }}</h3>
+  <div class="row">
+    {% for val in data %}
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+          <div class=" card-body" style="padding: 3%">
+            <h5 class="card-title" style="padding-bottom: 2%">{{ val.created_at|date:"d/m/Y H:m:s" }}
+              <span class="float-end">
+                <a href="#"><i class="fa-solid fa-trash" style="color: red"></i></a>
+              </span>
+            </h5>
+            <img src="{{ val.image.url }}" alt="Image" style="width:100%; height: 300px">
+            <p class="card-text" style="padding-top: 2%">
+              <label class="font-weight-bold" style="font-weight: bold">Description : </label> {{ val.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+    </div>
+{% endblock content %}

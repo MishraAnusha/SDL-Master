@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %} Login Page {% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/login_page.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+<div class="mainImg">
+  <div class="main-flex">
+    <div class="flex-container">
+            <div class="header">
+              <h3 class="heading">SignIn</h3>
+            </div>
+            {% if form.errors %}
+            <div class="text-danger" role="alert">
+                <div id="form_errors">
+                  {% for key, value in form.errors.items %}
+                    <strong>{{ value }}</strong>
+                  {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="form-body">
+              <form method="POST">
+                {% csrf_token %}
+                <div class="form-row">
+
+                    <div class="form-group">
+                      {#                      <div style="text-align: center">#}
+                      {#                        <a#}
+                      {#                            href="{% url 'social:begin' 'github' %}"#}
+                      {#                            class="btn btn-link btn-lg active"#}
+                      {#                        ><i class="fa-brands fa-github"></i></a>#}
+                      {#                        <a#}
+                      {#                            href="{% url 'social:begin' 'google-oauth2' %}"#}
+                      {#                            class="btn btn-link btn-lg active"#}
+                      {#                        ><i class="fa-brands fa-google"></i></a>#}
+                      {#                      </div>#}
+                      {#                      <hr/>#}
+                      {#                      <p class="text-center"><strong>OR</strong></p>#}
+                      {#                      <hr/>#}
+                      <label class="un">Username</label>
+                      {{ form.username }}
+                    </div>
+
+                </div>
+                <div class="form-row">
+
+                    <div class="form-group">
+                      <label class="pass">Password</label>
+                      {{ form.password }}
+                    </div>
+
+                </div>
+                <div class="form-row">
+
+                    <div class="form-group rem">
+                      <!-- Add Remember me functionality -->
+                      {{ form.remember_me }}
+                      <label> Remember me</label>
+                    </div>
+
+                </div>
+                <div class="form-row">
+
+                    <div class="form-group">
+                      <button
+                          name="login"
+                          class="btn login"
+                          id="login"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+
+                </div>
+              </form>
+            </div>
+            <div class="text-center">
+              <div>
+                <a href="{% url 'users-register' %}" class="signup">Don't have an account yet? Go to signup</a
+                ><br/>
+                <a href="{% url 'password_reset' %}" class="fp"><i>Forgot Password?</i></a>
+              </div>
+            </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

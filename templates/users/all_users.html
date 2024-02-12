@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %} User {% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/all_Users.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+    <div class="main">
+        <div class="row">
+          <div class="col-6">
+            <h3>List of User</h3>
+          </div>
+          <div class="col-6">
+            <a href="#" class="btn" style="float: right;">
+              <i class="fa-solid fa-user-plus"></i>
+            </a>
+          </div>
+        </div>
+
+        <table class="table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>UserName</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Admin User</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+              <td data-label="ID">{{ user.id }}</td>
+              <td data-label="UserName">{{ user.username }}</td>
+              <td data-label="Name">{{ user.first_name }} {{ user.last_name }}</td>
+              <td data-label="Email">{{ user.email }}</td>
+              <td data-label="Admin User">{{ user.is_superuser }}</td>
+              <td data-label="Action">
+                <i class="fas fa-eye" style="margin-right: 5%;"></i>
+                <i class="fa-solid fa-pen" style="margin-right: 5%;"></i>
+                <i class="fas fa-trash-alt" style="margin-right: 5%;"></i>
+                <button id = user.id class="btn view"> <a href="/nodes/user_nodes/{{ user.id }}" style="color: white; text-decoration: none;">view</a></button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

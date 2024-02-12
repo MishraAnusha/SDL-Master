@@ -1,0 +1,49 @@
+<style>
+     .page-link
+     {
+          background-color: black;
+          color: white;
+     }
+     .page-link:hover
+     {
+          background-color:  rgb(71, 191, 87);
+          color: white;
+     }
+     nav{
+          display: flex;
+          justify-content: center;
+     }
+     @media (max-width: 600px)
+     {
+          .active
+          {
+               margin-top: 0;
+          }
+     }
+</style>
+<nav aria-label="..." style="background-color: white;">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" {% if not data.has_previous %} class="disable" {% endif %}>
+            <a class="page-link"
+                    {% if not data.has_previous %}
+               href="#"
+                    {% else %}
+               href="?page={{ data.previous_page_number }}"
+                    {% endif %}
+               tabindex="-1">Previous</a>
+        </li>
+        {#        <li class="page-item"><a class="page-link" href="#">1</a></li>#}
+        <li class="page-item active">
+            <a class="page-link" style="background-color: white; color: black; border: 1px solid black;" href="#">{{ data.number }} / {{ data.paginator.num_pages }} <span class="sr-only">(current)</span></a>
+        </li>
+        {#        <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+        <li class="page-item">
+            <a class="page-link"
+                    {% if not data.has_next %}
+               href="#"
+                    {% else %}
+               href="?page={{ data.next_page_number }}"
+                    {% endif %}>Next</a>
+        </li>
+    </ul>
+</nav>

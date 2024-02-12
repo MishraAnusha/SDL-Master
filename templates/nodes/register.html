@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if node_id %}
+    Edit Node
+  {% else %}
+    Node Register
+  {% endif %}
+{% endblock title %}
+{% block htmlhead %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/Nodes/node_register.css' %}">
+{% endblock htmlhead %}
+{% block content %}
+  <div class="main">
+      <div class="main-conatiner">
+          <div class="form-content">
+            <div class="header">
+              <h3>
+                {% if node_id %}
+                  Edit Node
+                {% else %}
+                  Create Node
+                {% endif %}
+              </h3>
+            </div>
+            <div class="form-body">
+              <form method="POST">
+                {% csrf_token %} {% if form.errors %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                  <div id="form_errors">
+                    {% for key, value in form.errors.items %}
+                      <strong>{{ value }}</strong>
+                    {% endfor %}
+                  </div>
+                  <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% endif %}
+                <input type="hidden" name="node_id" value="{{ node_id }}">
+                    <div class="flex-container">
+                      <div class="form-group">
+                        <label>Name</label>
+                        {{ form.name }}
+                      </div>
+                      <div class="form-group">
+                        <label>Status</label>
+                        <div class="inner-container">
+                            {% for radio in form.status %}
+                              <div class="form-check col-6">
+                                {{ radio.tag }}
+                                <label class="form-check-label p-0" for="{{ radio.id_for_label }}">
+                                  {{ radio.choice_label }}
+                                </label>
+                              </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex-container">
+                      <div class="form-group">
+                        <label>Latitude</label>
+                        {{ form.latitude }}
+                      </div>
+                      <div class="form-group">
+                        <label>longitude</label>
+                        {{ form.longitude }}
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Description</label>
+                      {{ form.description }}
+                    </div>
+                    <div class="flex-container">
+                      <div class="form-group">
+                        <label>Fetch from Thing Speak</label>
+                        <div class="inner-container">
+                            {% for radio in form.thing_speak_fetch %}
+                              <div class="form-check col-6 ">
+                                {{ radio.tag }}
+                                <label class="form-check-label p-0" for="{{ radio.id_for_label }}">
+                                  {{ radio.choice_label }}
+                                </label>
+                              </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Channel Id</label>
+                        {{ form.channel_id }}
+                      </div>
+                    </div>
+                    <div class="flex-container">
+                      <div class="form-group">
+                        <label class="small mb-1">Use Api key: </label>
+                        {{ form.user_api_key }}
+                      </div>
+                      <div class="form-group">
+                        <label class="small mb-1">Node Api key:</label>
+                        {{ form.node_api_key }}
+                      </div>
+                    </div>
+                <div class="form-group">
+                  <button type="submit" class="btn">
+                    Save
+                  </button
+                  >
+                  <br/><br/>
+                </div>
+              </form>
+            </div>
+        </div>
+      </div>
+  </div>
+{% endblock content %}
+{% block script %}
+  <script>
+      $(document).ready(
+          function () {
+              $('input:radio[name="thing_speak_fetch"]').prop("value",
+                  function () {
+                      if ($(this).is(':checked') && $(this).val() === "False") {
+                          // append goes here
+                          $("#user_api_key").prop('disabled', true);
+                          $("#node_api_key").attr('disabled', true);
+                          $("#channel_id").attr('disabled', true);
+                      }
+                  }
+              ).change(
+                  function () {
+                      if ($(this).is(':checked') && $(this).val() === "False") {
+                          // append goes here
+                          $("#user_api_key").prop('disabled', true);
+                          $("#node_api_key").attr('disabled', true);
+                          $("#channel_id").attr('disabled', true);
+                      } else {
+                          $("#user_api_key").prop('disabled', false);
+                          $("#node_api_key").attr('disabled', false);
+                          $("#channel_id").attr('disabled', false);
+                      }
+                  }
+              );
+          }
+      )
+  </script>
+{% endblock %}
