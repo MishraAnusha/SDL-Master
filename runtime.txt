@@ -1,1 +1,8 @@
 python-3.8.10
+
+For AWS
+cd sdl
+source sdl-venv/bin/activate
+cd SDL-Master
+python3 manage.py runserver 0.0.0.0:8000
+http://link:8000
