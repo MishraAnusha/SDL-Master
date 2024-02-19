@@ -154,23 +154,28 @@ def H_Control(request):
 
 def process_parameters(request):
     if request.method == 'POST':
+        node_id=request.POST.get('node_id','')
         mvp = request.POST.get('mvp', '')
         mvs = request.POST.get('mvs', '')
+        svp = request.POST.get('svp', '')
+        svs = request.POST.get('svs', '')
+        ro_1 = request.POST.get('ro_1', '')
+        ro_2 = request.POST.get('ro_2', '')
+        
         
         # Create a dictionary to store form data
         form_data = {
+            'node_id':node_id,
             'mvp': mvp,
-            'mvs': mvs
+            'mvs': mvs,
+            'svp': svp,
+            'svs': svs,
+            'ro_1': ro_1,
+            'ro_2': ro_2
+            
         }
         
-        # Convert form data to JSON string
-        json_data = json.dumps(form_data)
-        
-        # Write JSON string to a file
-        with open('form_data.json', 'a') as file:
-            file.write(json_data + '\n')
-        
-        # Return a JSON response
-        return JsonResponse({'success': True})
+        # Return form data in JSON response
+        return JsonResponse({'success': True, 'form_data': form_data})
     else:
         return JsonResponse({'error': 'Invalid request method'})
