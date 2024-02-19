@@ -300,56 +300,58 @@
     ro_2Cell.textContent = formData.ro_2 ? "1" : "0";
     timestampCell.textContent = new Date().toLocaleString();
 
-    // Store the table data in sessionStorage
-    var tableData = JSON.parse(sessionStorage.getItem("tableData")) || [];
-    tableData.unshift(formData); // Insert at the beginning
-    sessionStorage.setItem("tableData", JSON.stringify(tableData));
-  }
+   // Store the table data in localStorage
+        var tableData = JSON.parse(localStorage.getItem("tableData")) || [];
+        tableData.unshift(formData); // Insert at the beginning
+        localStorage.setItem("tableData", JSON.stringify(tableData));
+      }
 
-  // Function to populate table with stored data
-  function populateTableFromStorage() {
-    var tableData = JSON.parse(sessionStorage.getItem("tableData")) || [];
-    var tableBody = document.querySelector("#data-table tbody");
-    tableBody.innerHTML = ""; // Clear existing table rows
-    tableData.forEach(function(formData) {
-      updateDataTable(formData);
-    });
-  }
+      // Function to populate table with stored data
+      function populateTableFromStorage() {
+        var tableData = JSON.parse(localStorage.getItem("tableData")) || [];
+        var tableBody = document.querySelector("#data-table tbody");
+        tableBody.innerHTML = ""; // Clear existing table rows
+        tableData.forEach(function (formData) {
+          updateDataTable(formData);
+        });
+      }
 
-  // Populate table with stored data when the page loads
-  populateTableFromStorage();
+      // Populate table with stored data when the page loads
+      populateTableFromStorage();
 
-  // Function to handle form submission
-  document.getElementById("parameter-form").addEventListener("submit", function (event) {
-    event.preventDefault();
+      // Function to handle form submission
+      document
+        .getElementById("parameter-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
 
-    var formData = new FormData(this);
+          var formData = new FormData(this);
 
-    fetch(this.action, {
-      method: this.method,
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Error occurred while sending data");
-        }
-      })
-      .then((data) => {
-        if (data.success) {
-          alert("Data sent successfully");
-          document.getElementById("parameter-form").reset();
-          updateDataTable(data.form_data);
-        } else {
-          throw new Error("Invalid response from server");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert(error.message);
-      });
-  });
+          fetch(this.action, {
+            method: this.method,
+            body: formData,
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error("Error occurred while sending data");
+              }
+            })
+            .then((data) => {
+              if (data.success) {
+                alert("Data sent successfully");
+                document.getElementById("parameter-form").reset();
+                updateDataTable(data.form_data);
+              } else {
+                throw new Error("Invalid response from server");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert(error.message);
+            });
+        });
     </script>
   </body>
 </html>
