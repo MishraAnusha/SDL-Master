@@ -260,6 +260,12 @@
       </table>
     </div>
 
+        <!-- Pagination -->
+        <ul id="pagination" class="pagination justify-content-center">
+          <!-- Pagination links will be added dynamically -->
+        </ul>
+      </div>
+
     <!-- Include Bootstrap Bundle JS (Popper.js and Bootstrap JS) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
@@ -267,59 +273,83 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-toggle@4.0.1/js/bootstrap-toggle.min.js"></script>
 
     <script>
-      document
-        .getElementById("parameter-form")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
+      
+    // Function to update table data
+  function updateDataTable(formData) {
+    // Get the table body
+    var tableBody = document.querySelector("#data-table tbody");
+    
+    // Create a new table row
+    var row = tableBody.insertRow(0); // Insert at the beginning
 
-          var formData = new FormData(this);
+    // Add cells to the row and set their content
+    var nodeidCell = row.insertCell(0);
+    var mvpCell = row.insertCell(1);
+    var mvsCell = row.insertCell(2);
+    var svpCell = row.insertCell(3);
+    var svsCell = row.insertCell(4);
+    var ro_1Cell = row.insertCell(5);
+    var ro_2Cell = row.insertCell(6);
+    var timestampCell = row.insertCell(7);
+    nodeidCell.textContent = formData.node_id;
+    mvpCell.textContent = formData.mvp ? "1" : "0";
+    mvsCell.textContent = formData.mvs ? "1" : "0";
+    svpCell.textContent = formData.svp ? "1" : "0";
+    svsCell.textContent = formData.svs ? "1" : "0";
+    ro_1Cell.textContent = formData.ro_1 ? "1" : "0";
+    ro_2Cell.textContent = formData.ro_2 ? "1" : "0";
+    timestampCell.textContent = new Date().toLocaleString();
 
-          fetch(this.action, {
-            method: this.method,
-            body: formData,
-          })
-            .then((response) => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                throw new Error("Error occurred while sending data");
-              }
-            })
-            .then((data) => {
-              if (data.success) {
-                alert("Data sent successfully");
-                document.getElementById("parameter-form").reset();
-                updateDataTable(data.form_data);
-              } else {
-                throw new Error("Invalid response from server");
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert(error.message);
-            });
-        });
+    // Store the table data in sessionStorage
+    var tableData = JSON.parse(sessionStorage.getItem("tableData")) || [];
+    tableData.unshift(formData); // Insert at the beginning
+    sessionStorage.setItem("tableData", JSON.stringify(tableData));
+  }
 
-      function updateDataTable(formData) {
-        var tableBody = document.querySelector("#data-table tbody");
-        var row = tableBody.insertRow();
-        var nodeidCell = row.insertCell(0);
-        var mvpCell = row.insertCell(1);
-        var mvsCell = row.insertCell(2);
-        var svpCell = row.insertCell(3);
-        var svsCell = row.insertCell(4);
-        var ro_1Cell = row.insertCell(5);
-        var ro_2Cell = row.insertCell(6);
-        var timestampCell = row.insertCell(7);
-        nodeidCell.textContent = formData.node_id;
-        mvpCell.textContent = formData.mvp ? "1" : "0";
-        mvsCell.textContent = formData.mvs ? "1" : "0";
-        svpCell.textContent = formData.svp ? "1" : "0";
-        svsCell.textContent = formData.svs ? "1" : "0";
-        ro_1Cell.textContent = formData.ro_1 ? "1" : "0";
-        ro_2Cell.textContent = formData.ro_2 ? "1" : "0";
-        timestampCell.textContent = new Date().toLocaleString();
-      }
+  // Function to populate table with stored data
+  function populateTableFromStorage() {
+    var tableData = JSON.parse(sessionStorage.getItem("tableData")) || [];
+    var tableBody = document.querySelector("#data-table tbody");
+    tableBody.innerHTML = ""; // Clear existing table rows
+    tableData.forEach(function(formData) {
+      updateDataTable(formData);
+    });
+  }
+
+  // Populate table with stored data when the page loads
+  populateTableFromStorage();
+
+  // Function to handle form submission
+  document.getElementById("parameter-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+
+    fetch(this.action, {
+      method: this.method,
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Error occurred while sending data");
+        }
+      })
+      .then((data) => {
+        if (data.success) {
+          alert("Data sent successfully");
+          document.getElementById("parameter-form").reset();
+          updateDataTable(data.form_data);
+        } else {
+          throw new Error("Invalid response from server");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert(error.message);
+      });
+  });
     </script>
   </body>
 </html>
