@@ -94,7 +94,7 @@
 <body>
   <div class="container">
     <h1>Send Data to H/W</h1>
-    <form id="parameter-form" action="{% url 'process_parameters' %}" method="post">
+    <form id="parameter-form" action="arn:aws:execute-api:us-east-2:590183901120:vyrwokjju2/*/POST/submit_resource" method="post">
       {% csrf_token %}
       <div class="mb-3">
         <label for="node_id" class="form-label">Node ID:</label>
