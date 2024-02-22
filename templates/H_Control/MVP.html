@@ -160,10 +160,6 @@
       <tbody></tbody>
     </table>
   </div>
-  <!-- Pagination -->
-  <ul id="pagination" class="pagination justify-content-center">
-    <!-- Pagination links will be added dynamically -->
-  </ul>
   <!-- Include Bootstrap Bundle JS (Popper.js and Bootstrap JS) -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
@@ -184,6 +180,9 @@
 
       fetch('https://m2vfrfa7fum7nl6oim3z2itxm40srffv.lambda-url.us-east-2.on.aws/', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(formData)
       })
       .then(response => response.json())
@@ -196,19 +195,24 @@
       });
     });
 
-    // Function to retrieve data
-    function fetchData(node_id) {
-      fetch('https://m2vfrfa7fum7nl6oim3z2itxm40srffv.lambda-url.us-east-2.on.aws/?node_id=' + node_id)
-      .then(response => response.json())
-      .then(data => {
-        // Process retrieved data
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error occurred while fetching data');
-      });
+   // Function to retrieve data
+function fetchData(node_id) {
+  fetch('https://m2vfrfa7fum7nl6oim3z2itxm40srffv.lambda-url.us-east-2.on.aws/?node_id=' + node_id, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
     }
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Process retrieved data
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error occurred while fetching data');
+  });
+}
   </script>
 </body>
 </html>
