@@ -16,6 +16,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import SensorData
 
 
 
@@ -410,3 +412,28 @@ def import_csv(request, node_id):
             return redirect(to=f'/nodes/user_nodes/{node.user_id}')
 
     return render(request, 'nodes/import_csv.html', {'form': form, 'node_id': node_id})
+
+
+def store_sensor_data(request):
+    if request.method == 'POST':
+        form = SensorDataForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'Data stored successfully'})
+        else:
+            return JsonResponse({'error': 'Invalid form data'}, status=400)
+    elif request.method == 'GET':
+        latest_entry = SensorData.objects.last()
+        if latest_entry:
+            data = {
+                'mvp': latest_entry.mvp,
+                'mvs': latest_entry.mvs,
+                'svp': latest_entry.svp,
+                'svs': latest_entry.svs,
+                'ro_1': latest_entry.ro_1,
+                'ro_2': latest_entry.ro_2,
+                'created_at': latest_entry.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': 'No data available'}, status=404)
