@@ -1,7 +1,6 @@
 from django import forms
 
 from .models import Nodes, CropImage
-from .models import SensorData
 
 class RegisterForm(forms.ModelForm):
     name = forms.CharField(
@@ -97,7 +96,3 @@ class CSVImportForm(forms.Form):
         required=True,
     )
 
-class SensorDataForm(forms.ModelForm):
-    class Meta:
-        model = SensorData
-        fields = ['mvp', 'mvs', 'svp', 'svs', 'ro_1', 'ro_2']
