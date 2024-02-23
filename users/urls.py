@@ -37,6 +37,5 @@ urlpatterns = [
                   path('activate/<uidb64>/<token>', views.activate, name='activate'),
                   path('get_all_users/', views.get_all_users, name='get_all_users'),
                   path('H_Control/', views.H_Control, name='H_Control'),
-                path('store-hwfeeds/', views.store_hwfeeds, name='store_hwfeeds'),
                 path('process_parameters/', views.process_parameters, name='process_parameters')
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
