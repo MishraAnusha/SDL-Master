@@ -24,14 +24,5 @@ class Profile(models.Model):
             img.save(self.avatar.path)
 
 
-from django.db import models
-
-class Feeds(models.Model):
-    mvp = models.BooleanField()
-    mvs = models.BooleanField()
-    svp = models.BooleanField()
-    svs = models.BooleanField()
-    ro_1 = models.BooleanField()
-    ro_2 = models.BooleanField()
 
 
