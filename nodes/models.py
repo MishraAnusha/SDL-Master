@@ -76,11 +76,3 @@ class CropImage(models.Model):
             img.thumbnail(new_img)
             img.save(self.image.path)
 
-class SensorData(models.Model):
-    mvp = models.BooleanField()
-    mvs = models.BooleanField()
-    svp = models.BooleanField()
-    svs = models.BooleanField()
-    ro_1 = models.BooleanField()
-    ro_2 = models.BooleanField()
-    created_at = models.DateTimeField(auto_now_add=True)
