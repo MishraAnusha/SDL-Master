@@ -1,3 +1,12 @@
+{% extends "base.html" %} {% load static %}
+<title>{% block title %} Nodes {% endblock %}</title>
+{% block htmlhead %} {% load static %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'css/all_Users.css' %}"
+/>
+{% endblock htmlhead %} {% block content %}
 <!-- HTML form to input data -->
 <form id="sensor-data-form">
     <input type="checkbox" name="mvp" id="mvp">
@@ -52,3 +61,4 @@
         // Display error message
     });
 </script>
+{% include "pagination.html" %} {% endblock content %}
