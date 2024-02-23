@@ -1,0 +1,33 @@
+<!-- input_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Sensor Data</title>
+</head>
+<body>
+    <h1>Input Sensor Data</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="mvp">MVP:</label>
+        <input type="checkbox" id="mvp" name="mvp">
+        <br>
+        <label for="mvs">MVS:</label>
+        <input type="checkbox" id="mvs" name="mvs">
+        <br>
+        <label for="svp">SVP:</label>
+        <input type="checkbox" id="svp" name="svp">
+        <br>
+        <label for="svs">SVS:</label>
+        <input type="checkbox" id="svs" name="svs">
+        <br>
+        <label for="ro_1">RO_1:</label>
+        <input type="checkbox" id="ro_1" name="ro_1">
+        <br>
+        <label for="ro_2">RO_2:</label>
+        <input type="checkbox" id="ro_2" name="ro_2">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
