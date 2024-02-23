@@ -152,9 +152,6 @@ def get_all_users(request):
 def H_Control(request):
     return render(request, 'H_control/MVP.html')
     
-def Feeds(request):
-    return render(request, 'nodes/feeds.html')
-
 def process_parameters(request):
     if request.method == 'POST':
         node_id=request.POST.get('node_id','')
@@ -183,37 +180,4 @@ def process_parameters(request):
     else:
         return JsonResponse({'error': 'Invalid request method'})
 
-from .models import Feeds
 
-def store_hwfeeds(request):
-    if request.method == "POST":
-        # Store data to the database
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        print(json.dumps(body))
-        
-        # Assuming 'Feeds' is your Django model
-        feed = Feeds(
-            mvp=body.get('mvp'),
-            mvs=body.get('mvs'),
-            svp=body.get('svp'),
-            svs=body.get('svs'),
-            ro_1=body.get('ro_1'),
-            ro_2=body.get('ro_2')
-        )
-        feed.save()
-        
-        return JsonResponse({'message': 'Data stored successfully'}, status=200)
-
-    elif request.method == "GET":
-        # Retrieve the latest entry from the database
-        latest_feed = Feeds.objects.latest('id')
-        data = {
-            'mvp': latest_feed.mvp,
-            'mvs': latest_feed.mvs,
-            'svp': latest_feed.svp,
-            'svs': latest_feed.svs,
-            'ro_1': latest_feed.ro_1,
-            'ro_2': latest_feed.ro_2
-        }
-        return JsonResponse(data, status=200)
