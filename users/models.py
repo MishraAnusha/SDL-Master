@@ -24,16 +24,14 @@ class Profile(models.Model):
             img.save(self.avatar.path)
 
 
-class Feeds(models.Model):
-    node_id = models.CharField(max_length=100)
-    MVP = models.CharField(max_length=100)
-    MVS = models.CharField(max_length=100)
-    SVP = models.CharField(max_length=100)
-    SVS = models.CharField(max_length=100)
-    RO_1 = models.CharField(max_length=100)
-    RO_2 = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+from django.db import models
 
-    def __str__(self):
-        return f"Feeds ID: {self.id}"
+class Feeds(models.Model):
+    mvp = models.BooleanField()
+    mvs = models.BooleanField()
+    svp = models.BooleanField()
+    svs = models.BooleanField()
+    ro_1 = models.BooleanField()
+    ro_2 = models.BooleanField()
+
 
