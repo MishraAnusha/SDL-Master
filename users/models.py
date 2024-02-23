@@ -22,3 +22,18 @@ class Profile(models.Model):
             new_img = (100, 100)
             img.thumbnail(new_img)
             img.save(self.avatar.path)
+
+
+class Feeds(models.Model):
+    node_id = models.CharField(max_length=100)
+    MVP = models.CharField(max_length=100)
+    MVS = models.CharField(max_length=100)
+    SVP = models.CharField(max_length=100)
+    SVS = models.CharField(max_length=100)
+    RO_1 = models.CharField(max_length=100)
+    RO_2 = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feeds ID: {self.id}"
+
