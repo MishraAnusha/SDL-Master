@@ -185,7 +185,7 @@ def process_parameters(request):
 
 from .models import Feeds
 
-def store_feeds(request):
+def store_hwfeeds(request):
     if request.method == "POST":
         # Store data to the database
         body_unicode = request.body.decode('utf-8')
