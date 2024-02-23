@@ -17,7 +17,6 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from .models import SensorData
 
 
 
@@ -414,26 +413,3 @@ def import_csv(request, node_id):
     return render(request, 'nodes/import_csv.html', {'form': form, 'node_id': node_id})
 
 
-def input_data(request):
-    if request.method == 'POST':
-        # Process form data and store in database
-        mvp = request.POST.get('mvp')
-        mvs = request.POST.get('mvs')
-        svp = request.POST.get('svp')
-        svs = request.POST.get('svs')
-        ro_1 = request.POST.get('ro_1')
-        ro_2 = request.POST.get('ro_2')
-        SensorData.objects.create(
-            MVP=mvp,
-            MVS=mvs,
-            SVP=svp,
-            SVS=svs,
-            RO_1=ro_1,
-            RO_2=ro_2
-        )
-        # Optionally, you can redirect to another page or display a success message
-    return render(request, 'nodes/input_form.html')
-
-def latest_entry(request):
-    latest_data = SensorData.objects.latest('timestamp')
-    return render(request, 'nodes/latest_entry.html', {'latest_data': latest_data})
