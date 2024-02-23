@@ -149,8 +149,8 @@ def get_all_users(request):
     users = User.objects.all()
     return render(request, 'users/all_users.html', {'users': users})
 
-def H_Control(request):
-    return render(request, 'H_Control/MVP.html')
+def Feeds(request):
+    return render(request, 'nodes/feeds.html')
 
 def process_parameters(request):
     if request.method == 'POST':
