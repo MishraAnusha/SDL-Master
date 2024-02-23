@@ -3,20 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feeds Input</title>
+    <title>Feeds</title>
 </head>
 <body>
-    <h1>Input Feeds</h1>
+    <h1>Latest Feeds</h1>
+    <div id="feeds-container">
+        <!-- Feeds will be displayed here dynamically -->
+    </div>
+
+    <h2>Input Feeds</h2>
     <form id="feeds-form">
-        <!-- Add input fields for MVP, MVS, SVP, SVS, RO_1, RO_2 -->
-        <input type="text" name="node_id" placeholder="Node ID">
-        <input type="text" name="MVP" placeholder="MVP">
-        <input type="text" name="MVS" placeholder="MVS">
-        <input type="text" name="SVP" placeholder="SVP">
-        <input type="text" name="SVS" placeholder="SVS">
-        <input type="text" name="RO_1" placeholder="RO_1">
-        <input type="text" name="RO_2" placeholder="RO_2">
+        <label for="mvp">MVP:</label>
+        <input type="text" id="mvp" name="mvp" required><br>
+
+        <label for="mvs">MVS:</label>
+        <input type="text" id="mvs" name="mvs" required><br>
+
+        <label for="svp">SVP:</label>
+        <input type="text" id="svp" name="svp" required><br>
+
+        <label for="svs">SVS:</label>
+        <input type="text" id="svs" name="svs" required><br>
+
+        <label for="ro_1">RO_1:</label>
+        <input type="text" id="ro_1" name="ro_1" required><br>
+
+        <label for="ro_2">RO_2:</label>
+        <input type="text" id="ro_2" name="ro_2" required><br>
+
         <button type="submit">Submit</button>
     </form>
+
+    <script>
+        document.getElementById('feeds-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = {
+                mvp: document.getElementById('mvp').value,
+                mvs: document.getElementById('mvs').value,
+                svp: document.getElementById('svp').value,
+                svs: document.getElementById('svs').value,
+                ro_1: document.getElementById('ro_1').value,
+                ro_2: document.getElementById('ro_2').value
+            };
+
+            // Send the form data to the server
+            fetch('/store-feeds/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Refresh the feeds list after submitting the form
+                fetchLatestFeeds();
+                console.log('Feed submitted successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error submitting feed:', error);
+            });
+        });
+
+        function fetchLatestFeeds() {
+            fetch('/store-feeds/')
+                .then(response => response.json())
+                .then(data => {
+                    // Process the retrieved data and display it
+                    displayFeeds(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching feeds:', error);
+                });
+        }
+
+        function displayFeeds(feeds) {
+            const container = document.getElementById('feeds-container');
+            container.innerHTML = ''; // Clear previous content
+
+            // Create elements to display the feeds
+            const ul = document.createElement('ul');
+            for (const [key, value] of Object.entries(feeds)) {
+                const li = document.createElement('li');
+                li.textContent = `${key}: ${value}`;
+                ul.appendChild(li);
+            }
+            container.appendChild(ul);
+        }
+
+        // Fetch the latest feeds when the page loads
+        document.addEventListener('DOMContentLoaded', fetchLatestFeeds);
+    </script>
 </body>
 </html>
