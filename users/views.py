@@ -184,27 +184,36 @@ def process_parameters(request):
         return JsonResponse({'error': 'Invalid request method'})
 
 from .models import Feeds
-def store_hwfeeds(request):
+
+def store_feeds(request):
     if request.method == "POST":
         # Store data to the database
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-        # Assuming 'node_id' is part of the request body
-        node_id = body.get('node_id')
-        if node_id:
-            # Assuming Feeds model has fields MVP, MVS, SVP, SVS, RO_1, RO_2
-            feed = Feeds.objects.create(
-                node_id=node_id,
-                MVP=body.get('MVP'),
-                MVS=body.get('MVS'),
-                SVP=body.get('SVP'),
-                SVS=body.get('SVS'),
-                RO_1=body.get('RO_1'),
-                RO_2=body.get('RO_2'),
-            )
-            feed.save()
-            return JsonResponse({'message': 'Data stored successfully'})
-        else:
-            return JsonResponse({'error': 'Node ID not provided'}, status=400)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+        print(json.dumps(body))
+        
+        # Assuming 'Feeds' is your Django model
+        feed = Feeds(
+            mvp=body.get('mvp'),
+            mvs=body.get('mvs'),
+            svp=body.get('svp'),
+            svs=body.get('svs'),
+            ro_1=body.get('ro_1'),
+            ro_2=body.get('ro_2')
+        )
+        feed.save()
+        
+        return JsonResponse({'message': 'Data stored successfully'}, status=200)
+
+    elif request.method == "GET":
+        # Retrieve the latest entry from the database
+        latest_feed = Feeds.objects.latest('id')
+        data = {
+            'mvp': latest_feed.mvp,
+            'mvs': latest_feed.mvs,
+            'svp': latest_feed.svp,
+            'svs': latest_feed.svs,
+            'ro_1': latest_feed.ro_1,
+            'ro_2': latest_feed.ro_2
+        }
+        return JsonResponse(data, status=200)
