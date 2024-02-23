@@ -1,6 +1,8 @@
 from django.urls import path
 
 from nodes import views
+from .views import store_sensor_data
+
 
 urlpatterns = [
     path('', views.node_list, name='nodes'),
@@ -26,6 +28,7 @@ urlpatterns = [
     # particular User Nodes
     path('user_nodes/<int:user_id>', views.node_particuler_list, name='user_nodes'),
     path('user_nodes/store_feeds', views.store_feeds, name='user_store_feeds'),
+    path('store-data/', store_sensor_data, name='store_sensor_data'),
     path('user_nodes/get_feeds_chart/<int:node_id>',
          views.get_feeds, name='user_get_feeds'),
     path('user_nodes/get_feeds_table/<int:node_id>',
