@@ -179,3 +179,29 @@ def process_parameters(request):
         return JsonResponse({'success': True, 'form_data': form_data})
     else:
         return JsonResponse({'error': 'Invalid request method'})
+
+from .models import Feeds
+def store_hwfeeds(request):
+    if request.method == "POST":
+        # Store data to the database
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        # Assuming 'node_id' is part of the request body
+        node_id = body.get('node_id')
+        if node_id:
+            # Assuming Feeds model has fields MVP, MVS, SVP, SVS, RO_1, RO_2
+            feed = Feeds.objects.create(
+                node_id=node_id,
+                MVP=body.get('MVP'),
+                MVS=body.get('MVS'),
+                SVP=body.get('SVP'),
+                SVS=body.get('SVS'),
+                RO_1=body.get('RO_1'),
+                RO_2=body.get('RO_2'),
+            )
+            feed.save()
+            return JsonResponse({'message': 'Data stored successfully'})
+        else:
+            return JsonResponse({'error': 'Node ID not provided'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
