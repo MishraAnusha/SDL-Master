@@ -150,7 +150,7 @@ def get_all_users(request):
     return render(request, 'users/all_users.html', {'users': users})
 
 def H_Control(request):
-    return render(request, 'H_control/MVP.html')
+    return render(request, 'H_Control/MVP.html')
     
 def process_parameters(request):
     if request.method == 'POST':
