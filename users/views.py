@@ -149,7 +149,7 @@ def get_all_users(request):
     users = User.objects.all()
     return render(request, 'users/all_users.html', {'users': users})
 
-def H_control(request):
+def H_Control(request):
     return render(request, 'H_control/MVP.html')
     
 def Feeds(request):
