@@ -22,6 +22,15 @@ class Profile(models.Model):
             new_img = (100, 100)
             img.thumbnail(new_img)
             img.save(self.avatar.path)
+            
+class Node(models.Model):
+    node_id = models.CharField(max_length=100)
+    mvp = models.CharField(max_length=100)
+    mvs = models.CharField(max_length=100)
+    svp = models.CharField(max_length=100)
+    svs = models.CharField(max_length=100)
+    ro_1 = models.BooleanField(default=False)
+    ro_2 = models.BooleanField(default=False)
 
 
 

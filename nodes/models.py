@@ -75,4 +75,14 @@ class CropImage(models.Model):
             new_img = (100, 100)
             img.thumbnail(new_img)
             img.save(self.image.path)
+            
+ 
 
+class Node(models.Model):
+    node_id = models.IntegerField()
+    mvp = models.IntegerField(null=True, default=0)
+    mvs = models.IntegerField(null=True, default=0)
+    svp = models.IntegerField(null=True, default=0)
+    svs = models.IntegerField(null=True, default=0)
+    ro_1 = models.IntegerField(null=True, default=0)
+    ro_2 = models.IntegerField(null=True, default=0)        

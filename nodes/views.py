@@ -18,8 +18,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-
-
+from .models import Node
+from django.http import HttpResponseBadRequest
 
 from nodes.models import Nodes, Feeds, CropImage
 from .forms import RegisterForm, ImageUploadForm, CSVImportForm
@@ -412,4 +412,63 @@ def import_csv(request, node_id):
 
     return render(request, 'nodes/import_csv.html', {'form': form, 'node_id': node_id})
 
+def input_form(request):
+    if request.method == 'POST':
+        node_id = request.POST.get('nodeId')
+        mvp = request.POST.get('mvp')
+        mvs = request.POST.get('mvs')
+        svp = request.POST.get('svp')
+        svs = request.POST.get('svs')
+        ro_1 = request.POST.get('ro_1')
+        ro_2 = request.POST.get('ro_2')
+        try:
+            node = Node.objects.get(node_id=node_id)
+            # Update existing entry
+            node.mvp = mvp
+            node.mvs = mvs
+            node.svp = svp
+            node.svs = svs
+            node.ro_1 = ro_1
+            node.ro_2 = ro_2
+        except Node.DoesNotExist:
+            node = Node(
+            node_id=node_id,
+            mvp=mvp,
+            mvs=mvs,
+            svp=svp,
+            svs=svs,
+            ro_1=ro_1,
+            ro_2=ro_2
+        )
+        node.save()
+        
+        return JsonResponse({
+            'nodeId': node.node_id,
+            'mvp': node.mvp,
+            'mvs': node.mvs,
+            'svp': node.svp,
+            'svs': node.svs,
+            'ro_1': node.ro_1,
+            'ro_2': node.ro_2,
+        })
+    # Fetch data from MongoDB to populate the table
+    nodes = Node.objects.all().order_by('-id')
+    nodes_json = json.dumps(list(nodes.values()))
 
+    return render(request, 'H_Control/index.html', {'nodes_json': nodes_json})
+
+def get_node_data(request, node_id):
+    try:
+        node = Node.objects.get(node_id=node_id)
+        node_data = {
+            'nodeId': node.node_id,
+            'mvp': node.mvp,
+            'mvs': node.mvs,
+            'svp': node.svp,
+            'svs': node.svs,
+            'ro_1': node.ro_1,
+            'ro_2': node.ro_2,
+        }
+        return JsonResponse(node_data)
+    except Node.DoesNotExist:
+        return JsonResponse({'error': 'Node not found'}, status=404)

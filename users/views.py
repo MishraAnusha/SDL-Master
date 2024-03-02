@@ -15,6 +15,7 @@ from django.views import View
 import json
 from django.shortcuts import render
 from django.http import JsonResponse
+from .models import Node
 
 from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
 from .token import account_activation_token
@@ -148,36 +149,4 @@ def activate(request, uidb64, token):
 def get_all_users(request):
     users = User.objects.all()
     return render(request, 'users/all_users.html', {'users': users})
-
-def H_Control(request):
-    return render(request, 'H_Control/MVP.html')
-    
-def process_parameters(request):
-    if request.method == 'POST':
-        node_id=request.POST.get('node_id','')
-        mvp = request.POST.get('mvp', '')
-        mvs = request.POST.get('mvs', '')
-        svp = request.POST.get('svp', '')
-        svs = request.POST.get('svs', '')
-        ro_1 = request.POST.get('ro_1', '')
-        ro_2 = request.POST.get('ro_2', '')
-        
-        
-        # Create a dictionary to store form data
-        form_data = {
-            'node_id':node_id,
-            'mvp': mvp,
-            'mvs': mvs,
-            'svp': svp,
-            'svs': svs,
-            'ro_1': ro_1,
-            'ro_2': ro_2
-            
-        }
-        
-        # Return form data in JSON response
-        return JsonResponse({'success': True, 'form_data': form_data})
-    else:
-        return JsonResponse({'error': 'Invalid request method'})
-
 

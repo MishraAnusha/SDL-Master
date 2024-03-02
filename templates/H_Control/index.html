@@ -1,0 +1,346 @@
+{% extends "base.html" %} {% load static %}
+<title>{% block title %} Nodes {% endblock %}</title>
+{% block htmlhead %} {% load static %} {% endblock htmlhead %} 
+{% block content %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Inputs</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Include Bootstrap Toggle CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-toggle@4.0.1/css/bootstrap-toggle.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form label {
+      font-weight: bold;
+    }
+
+    .form-container {
+      margin: 40px auto; /* Center the form horizontally */
+      width: 20%;
+    }
+    .form-control {
+      margin-bottom: 20px;
+    }
+
+    #data-table {
+      margin-top: 30px;
+    }
+
+    /* Custom switch styles */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2196f3;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196f3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    .results-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    .results-table th,
+    .results-table td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .results-table th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<h1 style="text-align: center">Hardware Inputs</h1>
+<div class="form-container">
+  <form id="inputForm">
+    {% csrf_token %}
+    <label for="nodeId" class="form-label">Node ID:</label>
+    <input
+      type="number"
+      id="nodeId"
+      name="nodeId"
+      class="form-input"
+      required
+    /><br /><br />
+
+    <div class="mb-3">
+      <label for="mvp" class="form-label">MVP:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="mvp"
+          name="mvp"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label for="mvs" class="form-label">MVS:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="mvs"
+          name="mvs"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label for="svp" class="form-label">SVP:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="svp"
+          name="svp"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label for="svs" class="form-label">SVS:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="svs"
+          name="svs"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label for="ro_1" class="form-label">RO_1:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="ro_1"
+          name="ro_1"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label for="ro_2" class="form-label">RO_2:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="ro_2"
+          name="ro_2"
+          class="toggle-slider"
+          data-toggle="toggle"
+          data-on="1"
+          data-off="0"
+          data-onstyle="success"
+          data-offstyle="danger"
+        />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+    <!-- CSRF Token -->
+
+    <button type="button" onclick="submitForm()">Submit</button>
+  </form>
+</div>
+<h2 style="text-align: center">Latest Inputs</h2>
+<table id="resultsTable" class="results-table">
+  <thead>
+    <tr>
+      <th>Node ID</th>
+      <th>MVP</th>
+      <th>MVS</th>
+      <th>SVP</th>
+      <th>SVS</th>
+      <th>RO_1</th>
+      <th>RO_2</th>
+    </tr>
+  </thead>
+  <tbody id="resultsBody"></tbody>
+</table>
+
+<script>
+  let nodesData = []; // Declare nodesData globally
+  window.onload = function () {
+    const nodesData = JSON.parse("{{ nodes_json|escapejs }}"); // Parse JSON data passed from view
+    displayInputData(nodesData); // Display fetched data
+  };
+
+  function getNodeData(nodeId) {
+    fetch(`/get_node_data/${nodeId}/`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Do something with the returned data
+        console.log(data);
+      })
+      .catch((error) => console.error("Error fetching node data:", error));
+  }
+
+  function submitForm() {
+    const nodeIdInput = document.getElementById("nodeId");
+    const nodeId = nodeIdInput.value.trim(); // Get the nodeId value and remove any leading/trailing whitespace
+
+    // Check if the nodeId is not empty
+    if (!nodeId) {
+      console.error("Node ID cannot be empty");
+      return;
+    }
+    const formData = new FormData(document.getElementById("inputForm"));
+    const checkboxes = ["mvp", "mvs", "svp", "svs", "ro_1", "ro_2"];
+
+    checkboxes.forEach((checkbox) => {
+      formData.set(checkbox, formData.get(checkbox) ? "1" : "0");
+    });
+
+    // Set the nodeId in the formData
+    formData.set("nodeId", nodeId);
+
+    fetch("", {
+      method: "POST",
+      body: formData,
+    })
+      .then(() => {
+        location.reload();
+      })
+      .catch((error) => console.error("Error submitting form:", error));
+  }
+
+  function displayInputData(data) {
+    const resultsBody = document.getElementById("resultsBody");
+    resultsBody.innerHTML = ""; // Clear existing table rows
+    if (data && data.length > 0) {
+      data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                <td>${item.node_id}</td>
+                <td>${item.mvp}</td>
+                <td>${item.mvs}</td>
+                <td>${item.svp}</td>
+                <td>${item.svs}</td>
+                <td>${item.ro_1}</td>
+                <td>${item.ro_2}</td>
+              `;
+        resultsBody.appendChild(row);
+      });
+    }
+  }
+</script>
+{% endblock content %}

@@ -2,6 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.contrib import admin
+from django.urls import path, include
 
 from users import views
 from .forms import LoginForm
@@ -36,6 +38,5 @@ urlpatterns = [
                   path('profile/', profile, name='users-profile'),
                   path('activate/<uidb64>/<token>', views.activate, name='activate'),
                   path('get_all_users/', views.get_all_users, name='get_all_users'),
-                  path('H_Control/', views.H_Control, name='H_Control'),
-                path('process_parameters/', views.process_parameters, name='process_parameters')
+                  path('', include('nodes.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
