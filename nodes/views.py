@@ -1,7 +1,7 @@
 import datetime
 import json
 import os.path
-
+import pickle
 import pandas as pd
 import numpy as np
 import keras
@@ -93,6 +93,7 @@ def store_feeds(request):
             gwc = get_gwc(body['soil_moisture'])
             # get predication for current data
             pred = predict_data(body['temperature'], body['humidity'], body['soil_temperature'], dura['duration'], 0.0)
+            pred1= predict_data1(body['temperature'],body['humidity'],body['soil_temperature'],body['LWS'],body['soil_moisture'])
             f_data = Feeds(
                 node_id=body['node_id'],
                 temperature=body['temperature'],
@@ -114,6 +115,7 @@ def store_feeds(request):
                 anthracnose=pred['anthracnose'],
                 root_rot=pred['root_rot'],
                 irrigation=pred['irrigation'],
+                health_status=pred1['health_status']
             )
 
             f_data.save()
@@ -351,7 +353,21 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : backup process
 # TODO : 2 way communication
 
-
+def predict_data1(input1,input2,input3,input4,input5):
+    model=pickle.load(open("model.pkl","rb"))
+    #prediction
+    result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
+    if result[0][0] == 1:
+        result = 'Leaf Spot Detected'
+        #fresult = 'Hence Unhealthy'
+    if result[0][1] == 1:
+        result = 'Anthracnose Detected'
+        #fresult = 'Hence Unhealthy'
+    else:
+        result = 'Healthy'
+        
+    return result
+    
 def predict_data(at, ah, st, lwd, sm):
     arr = [[at, ah, st, lwd, sm]]
     np_arr = np.array(arr)
@@ -365,7 +381,6 @@ def predict_data(at, ah, st, lwd, sm):
     # return {'powdery_mildew': 0, 'anthracnose': 0, 'root_rot': 0, 'irrigation': 1}
     return {'powdery_mildew': pred[0][0][0], 'anthracnose': pred[0][0][1], 'root_rot': pred[0][0][2],
             'irrigation': pred[1][0][0]}
-
 
 @login_required
 def import_csv(request, node_id):
