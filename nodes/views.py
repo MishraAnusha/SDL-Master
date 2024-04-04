@@ -354,7 +354,7 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : 2 way communication
 
 def predict_data1(input1,input2,input3,input4,input5):
-    model=pickle.load(open("model.pkl","rb"))
+    model=pickle.load(open("models/model.pkl","rb"))
     #prediction
     result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
     if result[0][0] == 1:
