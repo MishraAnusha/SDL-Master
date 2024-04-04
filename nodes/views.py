@@ -354,17 +354,22 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : 2 way communication
 
 def predict_data1(input1,input2,input3,input4,input5):
-    model=pickle.load(open("models/model.pkl","rb"))
+
+    full_path = os.path.join(os.getcwd(), 'models', 'model.pkl')
+
+    # Use the full path when opening the file
+    with open(full_path, 'rb') as f:
+        
     #prediction
-    result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
-    if result[0][0] == 1:
-        result = 'Leaf Spot Detected'
+        result = f.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
+        if result[0][0] == 1:
+            result = 'Leaf Spot Detected'
         #fresult = 'Hence Unhealthy'
-    if result[0][1] == 1:
-        result = 'Anthracnose Detected'
+        if result[0][1] == 1:
+            result = 'Anthracnose Detected'
         #fresult = 'Hence Unhealthy'
-    else:
-        result = 'Healthy'
+        else:
+            result = 'Healthy'
         
     return result
     
