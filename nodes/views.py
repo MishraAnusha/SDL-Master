@@ -17,7 +17,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+from django.conf import settings
 from .models import Node
 from django.http import HttpResponseBadRequest
 
@@ -355,13 +355,15 @@ def fetch_data_from_thing_speak(user_id):
 
 def predict_data1(input1,input2,input3,input4,input5):
 
-    full_path = os.path.join(os.getcwd(), 'models', 'model.pkl')
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    # Use the full path when opening the file
-    with open(full_path, 'rb') as f:
-        
-    #prediction
-        result = f.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
+    # Construct the path to the model.pkl file
+    MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
+
+    with open(MODEL_PATH, 'rb') as f:
+        model = pickle.load(f)
+        #prediction
+        result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
         if result[0][0] == 1:
             result = 'Leaf Spot Detected'
         #fresult = 'Hence Unhealthy'
