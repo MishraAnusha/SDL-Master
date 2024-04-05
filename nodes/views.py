@@ -115,7 +115,7 @@ def store_feeds(request):
                 anthracnose=pred['anthracnose'],
                 root_rot=pred['root_rot'],
                 irrigation=pred['irrigation'],
-                health_status=pred1['health_status']
+                health_status=pred1
             )
 
             f_data.save()
