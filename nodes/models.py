@@ -50,7 +50,7 @@ class Feeds(models.Model):
     anthracnose = models.FloatField(null=True, default=0)
     root_rot = models.FloatField(null=True, default=0)
     irrigation = models.FloatField(null=True, default=0)
-    health_status = models.FloatField(null=True, default=0)
+    health_status = models.TextField(default='')
     created_at = models.DateTimeField(default=now)
 
     def __str__(self):
