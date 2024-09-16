@@ -77,7 +77,6 @@ def get_gwc(sm):
 
 
 @csrf_exempt
-
 def store_feeds(request):
     if request.method == "POST":
         # store data to db
@@ -125,6 +124,41 @@ def store_feeds(request):
 
     return HttpResponse()
 
+@csrf_exempt
+def store_thingspeak_feeds(store_data):
+    dura = feeds_preprocess(body['node_id'], body['LWS'], c_time)
+    gwc = get_gwc(body['soil_moisture'])
+    # get predication for current data
+    pred = predict_data(body['temperature'], body['humidity'], body['soil_temperature'], dura['duration'], 0.0)
+    pred1= predict_data1(body['temperature'],body['humidity'],body['soil_temperature'],body['LWS'],body['soil_moisture'])
+    f_data = Feeds(
+        node_id=body['node_id'],
+        temperature=body['temperature'],
+        humidity=body['humidity'],
+        LWS=body['LWS'],
+        soil_temperature=body['soil_temperature'],
+        soil_moisture=body['soil_moisture'],
+        battery_status=body['battery_status'],
+        MVP=0,
+        MVS=0,
+        SVP=1,
+        SVS=0,
+        RO_1=1,
+        RO_2=1,
+        duration=dura['duration'],
+        GWC=gwc,
+        event=dura['event'],
+        powdery_mildew=pred['powdery_mildew'],
+        anthracnose=pred['anthracnose'],
+        root_rot=pred['root_rot'],
+        irrigation=pred['irrigation'],
+        health_status=pred1
+    )
+
+    f_data.save()
+    node.last_feed_time = c_time
+    node.save()
+    return HttpResponse(json.dumps(body))
 
 @login_required
 def get_feeds(request, node_id):
@@ -302,6 +336,18 @@ def get_chart_data(request, node_id):
     res = serializers.serialize('json', data1)
     return HttpResponse(res, content_type="application/json")
 
+@login_required
+def get_last_data(node_id):
+    #data = Feeds.objects.filter(node_id=node_id)
+    #node = Nodes.objects.filter(id=node_id)
+    node_data = Nodes.objects.filter(node_id=node_id)
+    last_feed = "https://api.thingspeak.com/channels/" + \
+                str(node_data.channel_id) + "/feeds/last"
+    lf_query = {'api_key': node_data.node_api_key}
+    response = requests.get(last_feed, lf_query)
+    data = response.json()
+    store_thingspeak_feeds(data)
+
 
 def fetch_data_from_thing_speak(user_id):
     all_channel = Nodes.objects.filter(user_id=user_id)
@@ -313,7 +359,6 @@ def fetch_data_from_thing_speak(user_id):
                 str(channel.channel_id) + "/feeds.json"
             lf_query = {'api_key': channel.node_api_key, 'minutes': 5}
             response = requests.get(last_feed, lf_query)
-            data = response.json()
             print(data)
             if data['channel']['last_entry_id'] != channel.last_feed_entry:
                 # fetch feeds
