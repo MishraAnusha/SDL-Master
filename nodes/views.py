@@ -198,7 +198,7 @@ def node_particuler_list(request, user_id):
     date = timezone.now()
     for i in data:
         if (i.last_feed_time is None) or i.last_feed_time is not None and date > i.last_feed_time + datetime.timedelta(
-                minutes=30):
+                minutes=5):
             i.status = False
     fetch_data_from_thing_speak(request.user.id)
     return render(request, 'nodes/list.html', {'data': data, 'user_id': user_id})
@@ -339,6 +339,7 @@ def fetch_data_from_thing_speak(user_id):
                         battery_status=feed['field6'],
                         created_at=feed['created_at']
                     )
+                    print("THingspeak Called")
 
                 # update channel
                 channel.last_feed_entry = data['channel']['last_entry_id']
