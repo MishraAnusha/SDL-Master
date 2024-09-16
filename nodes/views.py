@@ -185,7 +185,7 @@ def node_list(request):
         if (i.last_feed_time is None) or i.last_feed_time is not None and date > i.last_feed_time + datetime.timedelta(
                 minutes=30):
             i.status = False
-    # fetch_data_from_thing_speak(request.user.id)
+    fetch_data_from_thing_speak(request.user.id)
     return render(request, 'nodes/list.html', {'data': data, 'user_id': request.user.id})
 
 
@@ -200,7 +200,7 @@ def node_particuler_list(request, user_id):
         if (i.last_feed_time is None) or i.last_feed_time is not None and date > i.last_feed_time + datetime.timedelta(
                 minutes=30):
             i.status = False
-    # fetch_data_from_thing_speak(request.user.id)
+    fetch_data_from_thing_speak(request.user.id)
     return render(request, 'nodes/list.html', {'data': data, 'user_id': user_id})
 
 
