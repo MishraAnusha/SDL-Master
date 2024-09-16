@@ -311,7 +311,7 @@ def fetch_data_from_thing_speak(user_id):
                 continue
             last_feed = "https://api.thingspeak.com/channels/" + \
                 str(channel.channel_id) + "/feeds.json"
-            lf_query = {'api_key': channel.node_api_key, 'minutes': 30}
+            lf_query = {'api_key': channel.node_api_key, 'minutes': 5}
             response = requests.get(last_feed, lf_query)
             data = response.json()
             print(data)
