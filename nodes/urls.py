@@ -23,6 +23,8 @@ urlpatterns = [
     path('import-csv/<int:node_id>', views.import_csv, name='import_csv'),
     path('export_feeds_csv/<int:node_id>/',
          views.export_feeds_csv, name='export_feeds_csv'),
+    # Other URL mappings
+    path('get_last_data/<int:node_id>/', views.get_last_data, name='get_last_data'),
     # particular User Nodes
     path('input_form/', views.input_form, name='input_form'),
     path('', views.input_form, name='input_form'),
