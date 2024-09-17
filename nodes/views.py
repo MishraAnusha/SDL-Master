@@ -353,11 +353,11 @@ def get_last_data(request, node_id):
         
         # Fetch data from ThingSpeak
         response = requests.get(last_feed_url, params=lf_query)
-        
+        print(response)
         # Check response status
         if response.status_code == 200:
             data = response.json()
-            
+            print(data)
             # Call the function to store the feed in the database
             store_thingspeak_feeds(data)
             return JsonResponse({'status': 'success', 'message': 'Node data refreshed successfully.'})
