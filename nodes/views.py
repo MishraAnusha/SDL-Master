@@ -147,7 +147,7 @@ def store_thingspeak_feeds(node_id, data):
         print("before pred")
         pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
         print("after pred ")
-        pred1 = predict_data1(float(data['field1']), float(data['field2']), float(data['field3']), float(data['field4']), float(data['field5']))
+        pred1 = predict_data1(data['field1'], data['field2'], data['field3'],data['field4'],data['field5'])
         print("after prreed1")
         # Debug: Print predictions
         print("Predictions:", pred, pred1)
@@ -456,16 +456,17 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : 2 way communication
 
 def predict_data1(input1,input2,input3,input4,input5):
-
+    print("inside fn",input1)
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Construct the path to the model.pkl file
     MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
-
+    print(MODEL_PATH)
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
         #prediction
         numeric_inputs = np.array([[input1, input2, input3, input4, input5]])
+        print(numeric_inputs)
         placeholder_image = np.zeros((1, 1024, 2048, 3))  # Placeholder for image input
         print(numeric_inputs)
         result = model.predict([numeric_inputs, placeholder_image])
