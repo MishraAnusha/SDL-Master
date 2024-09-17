@@ -130,6 +130,9 @@ def store_thingspeak_feeds(node_id, data):
         # Fetch the node from the database
         node = Nodes.objects.get(id=node_id)
         
+        # Debug: Print received data
+        print("Received data:", data)
+        
         # Get the current time for the feed
         c_time = datetime.datetime.now(tz=timezone.utc)
         
@@ -137,9 +140,15 @@ def store_thingspeak_feeds(node_id, data):
         dura = feeds_preprocess(node_id, float(data['field4']), c_time)  # Assuming field4 is LWS
         gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
         
+        # Debug: Print preprocessed data
+        print("Preprocessed data:", dura, gwc)
+        
         # Predict data
         pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
         pred1 = predict_data1(float(data['field1']), float(data['field2']), float(data['field3']), float(data['field4']), float(data['field5']))
+        
+        # Debug: Print predictions
+        print("Predictions:", pred, pred1)
         
         # Create and save feed data
         f_data = Feeds(
@@ -177,7 +186,11 @@ def store_thingspeak_feeds(node_id, data):
     except Nodes.DoesNotExist:
         return HttpResponse(status=404, content="Node does not exist.")
     except Exception as e:
+        # Debug: Print exception details
+        print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
+
+
 
 @login_required
 def get_feeds(request, node_id):
