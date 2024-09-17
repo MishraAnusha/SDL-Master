@@ -125,48 +125,31 @@ def store_feeds(request):
     return HttpResponse()
 
 @csrf_exempt
-def store_thingspeak_feeds(store_data):
+def store_thingspeak_feeds(node_id, data):
     try:
-        # Assuming `store_data` is a dictionary with the necessary fields
-        node_id = store_data.get('node_id')  # Make sure `node_id` is passed
-        if not node_id:
-            return HttpResponse(json.dumps({'status': 'error', 'message': 'node_id is required'}), status=400)
-
         # Fetch the node from the database
         node = Nodes.objects.get(id=node_id)
         
-        # Get current time
+        # Get the current time for the feed
         c_time = datetime.datetime.now(tz=timezone.utc)
         
-        # Preprocess data
-        dura = feeds_preprocess(node_id, store_data.get('field4'), c_time)
-        gwc = get_gwc(store_data.get('field5'))
+        # Preprocess the feed data
+        dura = feeds_preprocess(node_id, float(data['field4']), c_time)  # Assuming field4 is LWS
+        gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
         
-        # Get predictions
-        pred = predict_data(
-            store_data.get('field1'),  # temperature
-            store_data.get('field2'),  # humidity
-            store_data.get('field3'),  # soil_temperature
-            dura['duration'],  # duration
-            0.0
-        )
-        pred1 = predict_data1(
-            store_data.get('field1'),  # temperature
-            store_data.get('field2'),  # humidity
-            store_data.get('field3'),  # soil_temperature
-            store_data.get('field4'),  # LWS
-            store_data.get('field5')   # soil_moisture
-        )
+        # Predict data
+        pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
+        pred1 = predict_data1(float(data['field1']), float(data['field2']), float(data['field3']), float(data['field4']), float(data['field5']))
         
-        # Create and save Feed object
+        # Create and save feed data
         f_data = Feeds(
             node_id=node_id,
-            temperature=store_data.get('field1'),
-            humidity=store_data.get('field2'),
-            LWS=store_data.get('field4'),
-            soil_temperature=store_data.get('field3'),
-            soil_moisture=store_data.get('field5'),
-            battery_status=store_data.get('field6'),
+            temperature=float(data['field1']),
+            humidity=float(data['field2']),
+            LWS=float(data['field4']),
+            soil_temperature=float(data['field3']),
+            soil_moisture=float(data['field5']),
+            battery_status=float(data['field6']),
             MVP=0,
             MVS=0,
             SVP=1,
@@ -184,15 +167,17 @@ def store_thingspeak_feeds(store_data):
         )
         
         f_data.save()
+        
+        # Update the node's last feed time
         node.last_feed_time = c_time
         node.save()
         
-        return HttpResponse(json.dumps({'status': 'success', 'message': 'Data stored successfully'}))
+        return HttpResponse(json.dumps(data))
+    
     except Nodes.DoesNotExist:
-        return HttpResponse(json.dumps({'status': 'error', 'message': 'Node does not exist'}), status=404)
+        return HttpResponse(status=404, content="Node does not exist.")
     except Exception as e:
-        return HttpResponse(json.dumps({'status': 'error', 'message': str(e)}), status=500)
-
+        return HttpResponse(status=500, content=str(e))
 
 @login_required
 def get_feeds(request, node_id):
@@ -375,8 +360,7 @@ def get_last_data(request, node_id):
     try:
         # Fetch node data from the database
         node_data = Nodes.objects.get(id=node_id)
-        print(node_data)
-        print(node_data.channel_id)
+        
         # Check if the node has valid ThingSpeak channel ID and API key
         if not node_data.channel_id or not node_data.node_api_key:
             return JsonResponse({'status': 'error', 'message': 'Node does not have valid ThingSpeak credentials.'}, status=400)
@@ -387,20 +371,22 @@ def get_last_data(request, node_id):
         
         # Fetch data from ThingSpeak
         response = requests.get(last_feed_url, params=lf_query)
-        print(response)
+        
         # Check response status
         if response.status_code == 200:
             data = response.json()
-            print(data)
+            
             # Call the function to store the feed in the database
-            store_thingspeak_feeds(data)
+            store_thingspeak_feeds(node_id, data)
             return JsonResponse({'status': 'success', 'message': 'Node data refreshed successfully.'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Failed to fetch data from ThingSpeak.'}, status=400)
+    
     except Nodes.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Node does not exist.'}, status=404)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
 
 
 
