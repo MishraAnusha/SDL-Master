@@ -462,6 +462,23 @@ def predict_data1(input1,input2,input3,input4,input5):
     # Construct the path to the model.pkl file
     MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
     print(MODEL_PATH)
+    model = pickle.load(open(MODEL_PATH, "rb"))
+    print("model loaded")
+    numeric_inputs = np.array([[input1, input2, input3, input4, input5]])
+    print(numeric_inputs)
+    placeholder_image = np.zeros((1, 1024, 2048, 3))  # Placeholder for image input
+    print(placeholder_image)
+    result = model.predict([numeric_inputs, placeholder_image])
+    print("result",result)
+    if result[0][0] == 1:
+        result = 'Leaf Spot Detected'
+    #fresult = 'Hence Unhealthy'
+    if result[0][1] == 1:
+        result = 'Anthracnose Detected'
+    #fresult = 'Hence Unhealthy'
+    else:
+        result = 'Healthy'
+    '''
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
         #prediction
@@ -480,7 +497,7 @@ def predict_data1(input1,input2,input3,input4,input5):
         #fresult = 'Hence Unhealthy'
         else:
             result = 'Healthy'
-        
+    '''
     return result
     
 def predict_data(at, ah, st, lwd, sm):
