@@ -342,6 +342,7 @@ def get_last_data(request, node_id):
         # Fetch node data from the database
         node_data = Nodes.objects.get(id=node_id)
         print(node_data)
+        print(node_data.channel_id)
         # Check if the node has valid ThingSpeak channel ID and API key
         if not node_data.channel_id or not node_data.node_api_key:
             return JsonResponse({'status': 'error', 'message': 'Node does not have valid ThingSpeak credentials.'}, status=400)
