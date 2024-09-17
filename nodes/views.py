@@ -144,9 +144,11 @@ def store_thingspeak_feeds(node_id, data):
         print("Preprocessed data:", dura, gwc)
         
         # Predict data
+        print("before pred")
         pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
+        print("after pred ")
         pred1 = predict_data1(float(data['field1']), float(data['field2']), float(data['field3']), float(data['field4']), float(data['field5']))
-        
+        print("after prreed1")
         # Debug: Print predictions
         print("Predictions:", pred, pred1)
         
