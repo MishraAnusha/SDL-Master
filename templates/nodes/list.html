@@ -27,7 +27,7 @@
                          style="background-color:rgba(108,117,125,0.15); margin: 5px;border-radius: 3%"
                             {% endif %}
                     >
-                        <div class=" card-body">
+                        <div class="card-body">
                             <h5 class="card-title">
                                 {{ val.id }} : {{ val.name }}
                                 <span class="float-end">
@@ -38,7 +38,7 @@
                                   {% endif %}
                                 </span>
                             </h5>
-                            <p class=" card-text">{{ val.description }}</p>
+                            <p class="card-text">{{ val.description }}</p>
 
                             <div class="row">
                             <div class="col-6">
@@ -72,7 +72,8 @@
                                 </a>
                                 <a href="crop_image_gallery/{{ val.id }}" class="col-3 btn transparent_btn" title="Crop Gallery">
                                     <i class="fa-solid fa-image"></i>
-                                </a></div>
+                                </a>
+                            </div>
                             <div class="row">
                                 <a href="upload_image/{{ val.id }}" class="col-3 btn transparent_btn" title="Upload Crop Image">
                                     <i class="fa-solid fa-upload"></i>
@@ -87,7 +88,13 @@
                                    data-id={{ val.id }} data-name={{ val.name }} title="Delete Node">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
-                                
+                            </div>
+                            <!-- Add Refresh Button -->
+                            <div class="row mt-3">
+                                <a href="#" class="refresh col-3 btn transparent_btn" 
+                                   data-id={{ val.id }} title="Refresh Node Data">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -99,25 +106,31 @@
 {% block script %}
     <script>
         $(document).ready(function () {
-            // Delete
+            // Delete Node
             $('.delete').click(function () {
                 const el = this;
-
-                // Delete id
                 const delete_id = $(this).data('id');
-                const node_name = $(this).data('name')
-                console.log(node_name)
-                //{#console.log(deleteid);#}
-                // Confirm box
-                bootbox.confirm("Do you really want to delete Node : " + node_name + " ? <br> It will delete all data permanently", function (result) {
-
+                const node_name = $(this).data('name');
+                bootbox.confirm("Do you really want to delete Node: " + node_name + " ? <br> It will delete all data permanently", function (result) {
                     if (result) {
-                        // AJAX Request
                         window.location = 'delete_node/' + delete_id;
                     }
-
                 });
+            });
 
+            // Refresh Node Data
+            $('.refresh').click(function () {
+                const refresh_id = $(this).data('id');
+                $.ajax({
+                    url: 'get_last_data/' + refresh_id,
+                    method: 'GET',
+                    success: function(response) {
+                        bootbox.alert("Node data has been refreshed.");
+                    },
+                    error: function(xhr, status, error) {
+                        bootbox.alert("Failed to refresh node data.");
+                    }
+                });
             });
         });
     </script>
