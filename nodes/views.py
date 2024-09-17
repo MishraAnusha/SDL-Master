@@ -465,7 +465,10 @@ def predict_data1(input1,input2,input3,input4,input5):
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
         #prediction
-        result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
+        numeric_inputs = np.array([[input1, input2, input3, input4, input5]])
+        placeholder_image = np.zeros((1, 1024, 2048, 3))  # Placeholder for image input
+        result = model.predict([numeric_inputs, placeholder_image])
+        #result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
         if result[0][0] == 1:
             result = 'Leaf Spot Detected'
         #fresult = 'Hence Unhealthy'
