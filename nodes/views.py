@@ -339,14 +339,26 @@ def get_chart_data(request, node_id):
 @login_required
 def get_last_data(request, node_id):
     try:
+        # Fetch node data from the database
         node_data = Nodes.objects.get(id=node_id)
+        
+        # Check if the node has valid ThingSpeak channel ID and API key
+        if not node_data.channel_id or not node_data.node_api_key:
+            return JsonResponse({'status': 'error', 'message': 'Node does not have valid ThingSpeak credentials.'}, status=400)
+        
+        # Construct the URL for ThingSpeak API
         last_feed_url = f"https://api.thingspeak.com/channels/{node_data.channel_id}/feeds/last"
         lf_query = {'api_key': node_data.node_api_key}
+        
+        # Fetch data from ThingSpeak
         response = requests.get(last_feed_url, params=lf_query)
-
+        
+        # Check response status
         if response.status_code == 200:
             data = response.json()
-            store_thingspeak_feeds(data)  # Call the function to store the feed in the database
+            
+            # Call the function to store the feed in the database
+            store_thingspeak_feeds(data)
             return JsonResponse({'status': 'success', 'message': 'Node data refreshed successfully.'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Failed to fetch data from ThingSpeak.'}, status=400)
@@ -354,6 +366,7 @@ def get_last_data(request, node_id):
         return JsonResponse({'status': 'error', 'message': 'Node does not exist.'}, status=404)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
 
 
 def fetch_data_from_thing_speak(user_id):
