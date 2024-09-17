@@ -126,39 +126,73 @@ def store_feeds(request):
 
 @csrf_exempt
 def store_thingspeak_feeds(store_data):
-    dura = feeds_preprocess(body['node_id'], body['LWS'], c_time)
-    gwc = get_gwc(body['soil_moisture'])
-    # get predication for current data
-    pred = predict_data(body['temperature'], body['humidity'], body['soil_temperature'], dura['duration'], 0.0)
-    pred1= predict_data1(body['temperature'],body['humidity'],body['soil_temperature'],body['LWS'],body['soil_moisture'])
-    f_data = Feeds(
-        node_id=body['node_id'],
-        temperature=body['temperature'],
-        humidity=body['humidity'],
-        LWS=body['LWS'],
-        soil_temperature=body['soil_temperature'],
-        soil_moisture=body['soil_moisture'],
-        battery_status=body['battery_status'],
-        MVP=0,
-        MVS=0,
-        SVP=1,
-        SVS=0,
-        RO_1=1,
-        RO_2=1,
-        duration=dura['duration'],
-        GWC=gwc,
-        event=dura['event'],
-        powdery_mildew=pred['powdery_mildew'],
-        anthracnose=pred['anthracnose'],
-        root_rot=pred['root_rot'],
-        irrigation=pred['irrigation'],
-        health_status=pred1
-    )
+    try:
+        # Assuming `store_data` is a dictionary with the necessary fields
+        node_id = store_data.get('node_id')  # Make sure `node_id` is passed
+        if not node_id:
+            return HttpResponse(json.dumps({'status': 'error', 'message': 'node_id is required'}), status=400)
 
-    f_data.save()
-    node.last_feed_time = c_time
-    node.save()
-    return HttpResponse(json.dumps(body))
+        # Fetch the node from the database
+        node = Nodes.objects.get(id=node_id)
+        
+        # Get current time
+        c_time = datetime.datetime.now(tz=timezone.utc)
+        
+        # Preprocess data
+        dura = feeds_preprocess(node_id, store_data.get('field4'), c_time)
+        gwc = get_gwc(store_data.get('field5'))
+        
+        # Get predictions
+        pred = predict_data(
+            store_data.get('field1'),  # temperature
+            store_data.get('field2'),  # humidity
+            store_data.get('field3'),  # soil_temperature
+            dura['duration'],  # duration
+            0.0
+        )
+        pred1 = predict_data1(
+            store_data.get('field1'),  # temperature
+            store_data.get('field2'),  # humidity
+            store_data.get('field3'),  # soil_temperature
+            store_data.get('field4'),  # LWS
+            store_data.get('field5')   # soil_moisture
+        )
+        
+        # Create and save Feed object
+        f_data = Feeds(
+            node_id=node_id,
+            temperature=store_data.get('field1'),
+            humidity=store_data.get('field2'),
+            LWS=store_data.get('field4'),
+            soil_temperature=store_data.get('field3'),
+            soil_moisture=store_data.get('field5'),
+            battery_status=store_data.get('field6'),
+            MVP=0,
+            MVS=0,
+            SVP=1,
+            SVS=0,
+            RO_1=1,
+            RO_2=1,
+            duration=dura['duration'],
+            GWC=gwc,
+            event=dura['event'],
+            powdery_mildew=pred['powdery_mildew'],
+            anthracnose=pred['anthracnose'],
+            root_rot=pred['root_rot'],
+            irrigation=pred['irrigation'],
+            health_status=pred1
+        )
+        
+        f_data.save()
+        node.last_feed_time = c_time
+        node.save()
+        
+        return HttpResponse(json.dumps({'status': 'success', 'message': 'Data stored successfully'}))
+    except Nodes.DoesNotExist:
+        return HttpResponse(json.dumps({'status': 'error', 'message': 'Node does not exist'}), status=404)
+    except Exception as e:
+        return HttpResponse(json.dumps({'status': 'error', 'message': str(e)}), status=500)
+
 
 @login_required
 def get_feeds(request, node_id):
