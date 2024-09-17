@@ -337,16 +337,23 @@ def get_chart_data(request, node_id):
     return HttpResponse(res, content_type="application/json")
 
 @login_required
-def get_last_data(node_id):
-    #data = Feeds.objects.filter(node_id=node_id)
-    #node = Nodes.objects.filter(id=node_id)
-    node_data = Nodes.objects.filter(node_id=node_id)
-    last_feed = "https://api.thingspeak.com/channels/" + \
-                str(node_data.channel_id) + "/feeds/last"
-    lf_query = {'api_key': node_data.node_api_key}
-    response = requests.get(last_feed, lf_query)
-    data = response.json()
-    store_thingspeak_feeds(data)
+def get_last_data(request, node_id):
+    try:
+        node_data = Nodes.objects.get(id=node_id)
+        last_feed_url = f"https://api.thingspeak.com/channels/{node_data.channel_id}/feeds/last"
+        lf_query = {'api_key': node_data.node_api_key}
+        response = requests.get(last_feed_url, params=lf_query)
+
+        if response.status_code == 200:
+            data = response.json()
+            store_thingspeak_feeds(data)  # Call the function to store the feed in the database
+            return JsonResponse({'status': 'success', 'message': 'Node data refreshed successfully.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Failed to fetch data from ThingSpeak.'}, status=400)
+    except Nodes.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Node does not exist.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 def fetch_data_from_thing_speak(user_id):
