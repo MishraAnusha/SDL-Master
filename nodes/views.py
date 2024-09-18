@@ -455,49 +455,75 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : backup process
 # TODO : 2 way communication
 
-def predict_data1(input1,input2,input3,input4,input5):
-    print("inside fn",input1)
-    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    # Construct the path to the model.pkl file
-    MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
-    print(MODEL_PATH)
-    model = pickle.load(open(MODEL_PATH, "rb"))
-    print("model loaded")
-    numeric_inputs = np.array([[input1, input2, input3, input4, input5]])
-    print(numeric_inputs)
-    placeholder_image = np.zeros((1, 1024, 2048, 3))  # Placeholder for image input
-    print(placeholder_image)
-    result = model.predict([numeric_inputs, placeholder_image])
-    print("result",result)
-    if result[0][0] == 1:
-        result = 'Leaf Spot Detected'
-    #fresult = 'Hence Unhealthy'
-    if result[0][1] == 1:
-        result = 'Anthracnose Detected'
-    #fresult = 'Hence Unhealthy'
-    else:
-        result = 'Healthy'
-    '''
-    with open(MODEL_PATH, 'rb') as f:
-        model = pickle.load(f)
-        #prediction
-        numeric_inputs = np.array([[input1, input2, input3, input4, input5]])
-        print(numeric_inputs)
-        placeholder_image = np.zeros((1, 1024, 2048, 3))  # Placeholder for image input
-        print(numeric_inputs)
-        result = model.predict([numeric_inputs, placeholder_image])
-        print("result",result)
-        #result = model.predict(np.array([input1,input2,input3,input4,input5]).reshape(1,5))
-        if result[0][0] == 1:
+def predict_data1(input1, input2, input3, input4, input5, image_file=None):
+    try:
+        print("inside predict_data1 function")
+        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        # Construct the path to the model.pkl file
+        MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
+        print(MODEL_PATH)
+
+        # Load the model
+        model = pickle.load(open(MODEL_PATH, "rb"))
+        print("Model loaded successfully")
+
+        numeric_inputs = None
+        image = None
+
+        # Check if valid numerical inputs are provided
+        try:
+            numeric_inputs = np.array([[float(input1), float(input2), float(input3), float(input4), float(input5)]])
+            print("Numeric inputs shape:", numeric_inputs.shape)
+        except ValueError:
+            numeric_inputs = None
+            print("Invalid or no numerical inputs provided")
+
+        # Check if the image file is provided
+        if image_file:
+            try:
+                image = Image.open(io.BytesIO(image_file))
+                image = image.convert('RGB')  # Ensure image is in RGB format
+                image = image.resize((2048, 1024))  # Resize image (width, height)
+                image = np.array(image) / 255.0  # Normalize the image
+                image = np.expand_dims(image, axis=0)  # Add batch dimension
+                print("Image input shape:", image.shape)
+            except Exception as e:
+                print(f"Error processing the image: {e}")
+                return "Invalid image file", 400
+
+        # Handle cases based on available inputs
+        if numeric_inputs is not None and image is not None:
+            # Both numeric and image inputs provided
+            result = model.predict([numeric_inputs, image])
+        elif numeric_inputs is not None:
+            # Only numeric inputs provided, using placeholder for image
+            placeholder_image = np.zeros((1, 1024, 2048, 3))
+            result = model.predict([numeric_inputs, placeholder_image])
+        elif image is not None:
+            # Only image input provided, using placeholder for numeric data
+            placeholder_numeric = np.zeros((1, 5))
+            result = model.predict([placeholder_numeric, image])
+        else:
+            return "Please provide at least one valid input (numeric or image).", 400
+
+        # Interpret the model's result
+        print("Prediction result array:", result)
+
+        if result[0][0] >= 0.5:
             result = 'Leaf Spot Detected'
-        #fresult = 'Hence Unhealthy'
-        if result[0][1] == 1:
+        elif result[0][1] >= 0.5:
             result = 'Anthracnose Detected'
-        #fresult = 'Hence Unhealthy'
+           
         else:
             result = 'Healthy'
-    '''
+        # Return the results in a structured format
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return "An error occurred during prediction.", 500
+
     return result
     
 def predict_data(at, ah, st, lwd, sm):
