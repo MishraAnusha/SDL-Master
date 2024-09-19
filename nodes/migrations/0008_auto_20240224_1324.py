@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('ro_2', models.BooleanField(default=False)),
             ],
         ),
-        migrations.AlterField(
+        """migrations.AlterField(
             model_name='feeds',
             name='MVP',
             field=models.IntegerField(null=True),
@@ -52,5 +52,5 @@ class Migration(migrations.Migration):
             model_name='feeds',
             name='SVS',
             field=models.IntegerField(null=True),
-        ),
+        ),"""
     ]
