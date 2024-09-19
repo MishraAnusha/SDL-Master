@@ -23,58 +23,32 @@ class Migration(migrations.Migration):
                 ('ro_2', models.BooleanField(default=False)),
             ],
         ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='MVP',
-        ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='MVS',
-        ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='RO_1',
-        ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='RO_2',
-        ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='SVP',
-        ),
-        migrations.RemoveField(
-            model_name='feeds',
-            name='SVS',
-        ),
-
-        # Re-add the fields with the new type (IntegerField)
-        migrations.AddField(
+          migrations.AlterField(
             model_name='feeds',
             name='MVP',
             field=models.IntegerField(null=True),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='feeds',
             name='MVS',
             field=models.IntegerField(null=True),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='feeds',
             name='RO_1',
             field=models.IntegerField(null=True),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='feeds',
             name='RO_2',
             field=models.IntegerField(null=True),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='feeds',
             name='SVP',
             field=models.IntegerField(null=True),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='feeds',
             name='SVS',
             field=models.IntegerField(null=True),
