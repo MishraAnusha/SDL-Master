@@ -456,18 +456,18 @@ def fetch_data_from_thing_speak(user_id):
 # TODO : 2 way communication
 
 
+
 def predict_data1(input1, input2, input3, input4, input5, image_file=None):
     try:
-        print("inside predict_data1 function")
+        print("Inside predict_data1 function")
         PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-        """# Construct the path to the model.pkl file
-        MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
+        # Construct the path to the model.h5 file
+        MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.h5')
         print(MODEL_PATH)
 
         # Load the model
-        model = pickle.load(open(MODEL_PATH, "rb"))"""
-        model = load_model('model.h5')
+        model = load_model(MODEL_PATH)
         print("Model loaded successfully")
 
         numeric_inputs = None
@@ -486,7 +486,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             try:
                 image = Image.open(io.BytesIO(image_file))
                 image = image.convert('RGB')  # Ensure image is in RGB format
-                image = image.resize((2048, 1024))  # Resize image (width, height)
+                #image = image.resize((2048, 1024))  # Resize image (width, height)
+                image = image.resize((64, 64))
                 image = np.array(image) / 255.0  # Normalize the image
                 image = np.expand_dims(image, axis=0)  # Add batch dimension
                 print("Image input shape:", image.shape)
@@ -516,10 +517,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             result = 'Leaf Spot Detected'
         elif result[0][1] >= 0.5:
             result = 'Anthracnose Detected'
-           
         else:
             result = 'Healthy'
-        # Return the results in a structured format
 
     except Exception as e:
         print(f"Error occurred: {e}")
