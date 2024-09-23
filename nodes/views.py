@@ -20,7 +20,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from .models import Node
 from django.http import HttpResponseBadRequest
-
+from keras.models import load_model
 from nodes.models import Nodes, Feeds, CropImage
 from .forms import RegisterForm, ImageUploadForm, CSVImportForm
 
