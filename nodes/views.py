@@ -501,7 +501,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             result = model.predict([numeric_inputs, image])
         elif numeric_inputs is not None:
             # Only numeric inputs provided, using placeholder for image
-            placeholder_image = np.zeros((1, 1024, 2048, 3))
+            #placeholder_image = np.zeros((1, 1024, 2048, 3))
+            placeholder_image = np.zeros((1, 64, 64, 3))
             result = model.predict([numeric_inputs, placeholder_image])
         elif image is not None:
             # Only image input provided, using placeholder for numeric data
