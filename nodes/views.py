@@ -461,12 +461,13 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
         print("inside predict_data1 function")
         PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-        # Construct the path to the model.pkl file
+        """# Construct the path to the model.pkl file
         MODEL_PATH = os.path.join(PROJECT_ROOT, 'static', 'models', 'model.pkl')
         print(MODEL_PATH)
 
         # Load the model
-        model = pickle.load(open(MODEL_PATH, "rb"))
+        model = pickle.load(open(MODEL_PATH, "rb"))"""
+        model = load_model('model.h5')
         print("Model loaded successfully")
 
         numeric_inputs = None
