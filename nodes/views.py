@@ -345,7 +345,9 @@ def crop_image_upload(request, node_id):
 @login_required
 def crop_image_gallery(request, node_id):
     data = CropImage.objects.filter(node_id=node_id)
+    print(data)
     node = Nodes.objects.get(id=node_id)
+    print(node)
     return render(request, 'nodes/image_gallery.html', {'data': data, 'node': node, 'node_id': node_id})
 
 
