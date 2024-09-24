@@ -210,14 +210,15 @@ def store_thingspeak_feeds(node_id, data):
         
         # Debug: Print preprocessed data
         print("Preprocessed data:", dura, gwc)
-        
+
+
+        # Fetch all entries for the current node
+        gallery_entries = CropImage.objects.filter(node_id=node_id)
+
+        # Manually filter by date in Python
+        gallery_entry = next((entry for entry in gallery_entries if entry.created_at.date() == c_time.date()), None)
         # Fetch the most recent image for the same date (if available)
         image = None
-        gallery_entry = CropImage.objects.filter(
-            node_id=node_id,
-            created_at__date=c_time.date()  # Ensure it's the same date
-        ).order_by('-created_at').first()
-        
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
         
