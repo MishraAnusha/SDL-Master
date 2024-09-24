@@ -24,6 +24,10 @@ from keras.models import load_model
 from nodes.models import Nodes, Feeds, CropImage
 from .forms import RegisterForm, ImageUploadForm, CSVImportForm
 
+from PIL import Image  # Import the Image module from PIL (Python Imaging Library)
+import io
+
+
 
 # Create your views here.
 
@@ -211,30 +215,30 @@ def store_thingspeak_feeds(node_id, data):
         # Debug: Print preprocessed data
         print("Preprocessed data:", dura, gwc)
 
-
         # Fetch all entries for the current node
         gallery_entries = CropImage.objects.filter(node_id=node_id)
 
-        # Manually filter by date in Python
+        # Manually filter by date in Python to match created_at with current date
         gallery_entry = next((entry for entry in gallery_entries if entry.created_at.date() == c_time.date()), None)
+
         # Fetch the most recent image for the same date (if available)
         image = None
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
-        
+
         # Predict data with numerical values
         print("Before numerical prediction")
         pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
-        
+
         # Predict using both numerical and image data if available
         print("Before image-based prediction")
         pred1 = predict_data1(
             data['field1'], data['field2'], data['field3'], data['field4'], data['field5'], image_file=image
         )
-        
+
         # Debug: Print predictions
         print("Predictions:", pred, pred1)
-        
+
         # Create and save feed data
         f_data = Feeds(
             node_id=node_id,
@@ -259,13 +263,13 @@ def store_thingspeak_feeds(node_id, data):
             irrigation=pred['irrigation'],
             health_status=pred1  # Using result from predict_data1
         )
-        
+
         f_data.save()
-        
+
         # Update the node's last feed time
         node.last_feed_time = c_time
         node.save()
-        
+
         return HttpResponse(json.dumps(data))
     
     except Nodes.DoesNotExist:
