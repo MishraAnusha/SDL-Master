@@ -124,7 +124,7 @@ def store_feeds(request):
 
     return HttpResponse()
 
-@csrf_exempt
+"""goluuuuuuuuuuuuuuuuuuuuuuuuuuu@csrf_exempt
 def store_thingspeak_feeds(node_id, data):
     try:
         # Fetch the node from the database
@@ -190,7 +190,90 @@ def store_thingspeak_feeds(node_id, data):
     except Exception as e:
         # Debug: Print exception details
         print("Exception occurred:", str(e))
+        return HttpResponse(status=500, content=str(e))"""
+
+@csrf_exempt
+def store_thingspeak_feeds(node_id, data):
+    try:
+        # Fetch the node from the database
+        node = Nodes.objects.get(id=node_id)
+        
+        # Debug: Print received data
+        print("Received data:", data)
+        
+        # Get the current time for the feed
+        c_time = datetime.datetime.now(tz=timezone.utc)
+        
+        # Preprocess the feed data
+        dura = feeds_preprocess(node_id, float(data['field4']), c_time)  # Assuming field4 is LWS
+        gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
+        
+        # Debug: Print preprocessed data
+        print("Preprocessed data:", dura, gwc)
+        
+        # Fetch the most recent image for the same date (if available)
+        image = None
+        gallery_entry = CropImage.objects.filter(
+            node_id=node_id,
+            created_at__date=c_time.date()  # Ensure it's the same date
+        ).order_by('-created_at').first()
+        
+        if gallery_entry and gallery_entry.image:
+            image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
+        
+        # Predict data with numerical values
+        print("Before numerical prediction")
+        pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
+        
+        # Predict using both numerical and image data if available
+        print("Before image-based prediction")
+        pred1 = predict_data1(
+            data['field1'], data['field2'], data['field3'], data['field4'], data['field5'], image_file=image
+        )
+        
+        # Debug: Print predictions
+        print("Predictions:", pred, pred1)
+        
+        # Create and save feed data
+        f_data = Feeds(
+            node_id=node_id,
+            temperature=float(data['field1']),
+            humidity=float(data['field2']),
+            LWS=float(data['field4']),
+            soil_temperature=float(data['field3']),
+            soil_moisture=float(data['field5']),
+            battery_status=float(data['field6']),
+            MVP=0,
+            MVS=0,
+            SVP=1,
+            SVS=0,
+            RO_1=1,
+            RO_2=1,
+            duration=dura['duration'],
+            GWC=gwc,
+            event=dura['event'],
+            powdery_mildew=pred['powdery_mildew'],
+            anthracnose=pred['anthracnose'],
+            root_rot=pred['root_rot'],
+            irrigation=pred['irrigation'],
+            health_status=pred1  # Using result from predict_data1
+        )
+        
+        f_data.save()
+        
+        # Update the node's last feed time
+        node.last_feed_time = c_time
+        node.save()
+        
+        return HttpResponse(json.dumps(data))
+    
+    except Nodes.DoesNotExist:
+        return HttpResponse(status=404, content="Node does not exist.")
+    except Exception as e:
+        # Debug: Print exception details
+        print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
+
 
 
 
