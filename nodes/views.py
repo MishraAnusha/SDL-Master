@@ -156,11 +156,13 @@ def store_thingspeak_feeds(node_id, data):
             (entry for entry in gallery_entries if c_time.date() >= entry.created_at.date() >= (c_time.date() - datetime.timedelta(days=2))),
             None
         )
+        print("is 2 days ka available or not")
 
         # Fetch the image if available within the date range
         image = None
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
+            print("image milaaa")
 
         # Predict data with numerical values
         print("Before numerical prediction")
