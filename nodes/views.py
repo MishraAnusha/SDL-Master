@@ -128,7 +128,7 @@ def store_feeds(request):
 
     return HttpResponse()
 
-@csrf_exempt
+
 def store_thingspeak_feeds(node_id, data):
     try:
         # Fetch the node from the database
@@ -149,16 +149,11 @@ def store_thingspeak_feeds(node_id, data):
 
         # Fetch all entries for the current node
         gallery_entries = CropImage.objects.filter(node_id=node_id)
-        
-        # Filter gallery entries within 2 days prior to the current date
-        two_days_ago = c_time - datetime.timedelta(days=2)
-        gallery_entry = next(
-            (entry for entry in gallery_entries 
-             if two_days_ago.date() <= entry.created_at.date() <= c_time.date()), 
-            None
-        )
 
-        # Fetch the most recent image within the 2-day window (if available)
+        # Manually filter by date in Python to match created_at with current date
+        gallery_entry = next((entry for entry in gallery_entries if entry.created_at.date() == c_time.date()), None)
+
+        # Fetch the most recent image for the same date (if available)
         image = None
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
@@ -168,13 +163,10 @@ def store_thingspeak_feeds(node_id, data):
         pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
 
         # Predict using both numerical and image data if available
-        if image:
-            print("Before image-based prediction")
-            pred1 = predict_data1(
-                data['field1'], data['field2'], data['field3'], data['field4'], data['field5'], image_file=image
-            )
-        else:
-            pred1 = None  # Fallback to numerical data only if no image
+        print("Before image-based prediction")
+        pred1 = predict_data1(
+            data['field1'], data['field2'], data['field3'], data['field4'], data['field5'], image_file=image
+        )
 
         # Debug: Print predictions
         print("Predictions:", pred, pred1)
@@ -201,7 +193,7 @@ def store_thingspeak_feeds(node_id, data):
             anthracnose=pred['anthracnose'],
             root_rot=pred['root_rot'],
             irrigation=pred['irrigation'],
-            health_status=pred1 if pred1 else pred['health_status']  # Use numerical prediction if no image prediction
+            health_status=pred1  # Using result from predict_data1
         )
 
         f_data.save()
@@ -218,6 +210,7 @@ def store_thingspeak_feeds(node_id, data):
         # Debug: Print exception details
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
+
 
 
 
