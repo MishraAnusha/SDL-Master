@@ -576,7 +576,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             try:
                 image = Image.open(io.BytesIO(image_file))
                 image = image.convert('RGB')  # Ensure image is in RGB format
-                image = image.resize((2048, 1024))  # Resize image (width, height)
+                image = image.resize((1024, 461))
+                #image = image.resize((2048, 1024))  # Resize image (width, height)
                 #image = image.resize((64, 64))
                 image = np.array(image) / 255.0  # Normalize the image
                 image = np.expand_dims(image, axis=0)  # Add batch dimension
@@ -591,7 +592,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             result = model.predict([numeric_inputs, image])
         elif numeric_inputs is not None:
             # Only numeric inputs provided, using placeholder for image
-            placeholder_image = np.zeros((1, 1024, 2048, 3))
+            #placeholder_image = np.zeros((1, 1024, 2048, 3))
+            placeholder_image = np.zeros((1, 461, 1024, 3))
             #placeholder_image = np.zeros((1, 64, 64, 3))
             result = model.predict([numeric_inputs, placeholder_image])
         elif image is not None:
