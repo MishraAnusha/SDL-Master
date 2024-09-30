@@ -576,8 +576,8 @@ def predict_data1(input1, input2, input3, input4, input5, image_file=None):
             try:
                 image = Image.open(io.BytesIO(image_file))
                 image = image.convert('RGB')  # Ensure image is in RGB format
-                #image = image.resize((2048, 1024))  # Resize image (width, height)
-                image = image.resize((64, 64))
+                image = image.resize((2048, 1024))  # Resize image (width, height)
+                #image = image.resize((64, 64))
                 image = np.array(image) / 255.0  # Normalize the image
                 image = np.expand_dims(image, axis=0)  # Add batch dimension
                 print("Image input shape:", image.shape)
