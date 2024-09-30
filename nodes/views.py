@@ -129,6 +129,7 @@ def store_feeds(request):
     return HttpResponse()
 
 
+@csrf_exempt
 def store_thingspeak_feeds(node_id, data):
     try:
         # Fetch the node from the database
@@ -148,12 +149,15 @@ def store_thingspeak_feeds(node_id, data):
         print("Preprocessed data:", dura, gwc)
 
         # Fetch all entries for the current node
-        gallery_entries = CropImage.objects.filter(node_id=node_id)
+        gallery_entries = CropImage.objects.filter(node_id=node_id).order_by('-created_at')
 
-        # Manually filter by date in Python to match created_at with current date
-        gallery_entry = next((entry for entry in gallery_entries if entry.created_at.date() == c_time.date()), None)
+        # Manually filter for the most recent image up to 2 days before the current time
+        gallery_entry = next(
+            (entry for entry in gallery_entries if c_time.date() >= entry.created_at.date() >= (c_time.date() - datetime.timedelta(days=2))),
+            None
+        )
 
-        # Fetch the most recent image for the same date (if available)
+        # Fetch the image if available within the date range
         image = None
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()  # Assuming image is a FileField or ImageField
@@ -210,9 +214,6 @@ def store_thingspeak_feeds(node_id, data):
         # Debug: Print exception details
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
-
-
-
 
 
 @login_required
