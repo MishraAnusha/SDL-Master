@@ -7,6 +7,7 @@ import numpy as np
 import keras
 import requests
 import csv
+import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -244,7 +245,103 @@ def get_historical_data(request, node_id):
 
     except Feeds.DoesNotExist:
         return JsonResponse({'error': 'No historical data found'}, status=404)
-    
+
+
+
+# views.py
+# Function to calculate AUDPC
+def calculate_audpc(severity_data, time_points):
+    audpc = 0
+    for i in range(1, len(severity_data)):
+        audpc += 0.5 * (time_points[i] - time_points[i - 1]) * (severity_data[i] + severity_data[i - 1])
+    return audpc
+
+# Function for linear yield loss calculation
+def calculate_linear_yield_loss(severity, max_yield_loss=30):
+    yield_loss = (severity / 100) * max_yield_loss
+    return yield_loss
+
+# Function for AUDPC-based yield loss calculation
+def calculate_audpc_yield_loss(audpc, max_audpc=1000, max_yield_loss=50):
+    yield_loss = (audpc / max_audpc) * max_yield_loss
+    return yield_loss
+def calculate_proxy_severity(lws, temperature, humidity):
+    """
+    Calculate disease severity using proxy metrics:
+    - lws: Leaf Wetness Duration (in hours)
+    - temperature: Ambient temperature (in degrees Celsius)
+    - humidity: Ambient humidity (in percentage)
+
+    Returns:
+        severity: Estimated severity percentage (0 to 100)
+    """
+    # Define thresholds
+    lws_threshold = 10  # Example: LWS > 10 hours is critical
+    temp_min, temp_max = 15, 30  # Ideal temperature range for disease
+    humidity_threshold = 80  # Humidity > 80% is critical
+
+    # Severity weights
+    severity = 0
+
+    # Leaf Wetness Severity
+    if lws > lws_threshold:
+        severity += min((lws - lws_threshold) * 2, 40)  # Max contribution: 40%
+
+    # Temperature Severity
+    if temp_min <= temperature <= temp_max:
+        severity += 30  # Ideal temperature range contributes 30%
+
+    # Humidity Severity
+    if humidity > humidity_threshold:
+        severity += min((humidity - humidity_threshold) * 0.5, 30)  # Max contribution: 30%
+
+    return min(severity, 100)  # Cap severity at 100%
+
+def get_disease_analysis(request, node_id):
+    try:
+        # Fetch the node and its latest feed data
+        node = Nodes.objects.get(id=node_id)
+        latest_feed = Feeds.objects.filter(node_id=node_id).order_by('-created_at').first()
+        if not latest_feed:
+            return JsonResponse({'error': 'No feed data available for this node'}, status=404)
+
+        # Proxy-based severity calculation
+        severity = calculate_proxy_severity(
+            lws=latest_feed.LWS, 
+            temperature=latest_feed.temperature, 
+            humidity=latest_feed.humidity
+        )
+        print(f"Disease Severity (Proxy-Based): {severity}%")
+
+        # Fetch data for disease progression analysis
+        feeds = Feeds.objects.filter(node_id=node_id).order_by('created_at')
+        time_points = [feed.created_at.timestamp() for feed in feeds]
+        severity_data = [
+            calculate_proxy_severity(feed.LWS, feed.temperature, feed.humidity) for feed in feeds
+        ]
+
+        # Calculate AUDPC
+        audpc = calculate_audpc(severity_data, time_points)
+
+        # Calculate yield loss
+        yield_loss_linear = calculate_linear_yield_loss(severity)
+        yield_loss_audpc = calculate_audpc_yield_loss(audpc)
+        print("shkhkhkhkhkhkhkhkhkhkhkhkhkhkhkhkdj")
+        return render(request, 'nodes/disease_analysis.html', {
+        'node_id': node_id,
+        'severity': severity,
+        'audpc': audpc,
+        'yield_loss_linear': yield_loss_linear,
+        'yield_loss_audpc': yield_loss_audpc,
+        'time_points': [feed.created_at.strftime('%Y-%m-%d') for feed in feeds] or [],  # Ensure list
+        'severity_data': severity_data or []
+        })
+
+    except Nodes.DoesNotExist:
+        return JsonResponse({'error': 'Node not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 @login_required
 def get_feeds(request, node_id):

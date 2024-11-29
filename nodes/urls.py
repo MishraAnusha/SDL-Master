@@ -50,6 +50,8 @@ urlpatterns = [
          views.export_feeds_csv, name='user_export_feeds_csv'),
     path('nodes/historical_data/<int:node_id>', 
          views.get_historical_data, name='historical_data'),
+    path('nodes/disease_analysis/<int:node_id>', views.get_disease_analysis, name='disease_analysis'),
+
 
 
 ]

@@ -52,7 +52,6 @@ class Feeds(models.Model):
     irrigation = models.FloatField(null=True, default=0)
     health_status = models.TextField(default='')
     created_at = models.DateTimeField(default=now)
-
     def __str__(self):
         return str(self.node_id)
 
@@ -87,3 +86,4 @@ class Node(models.Model):
     svs = models.IntegerField(null=True, default=0)
     ro_1 = models.IntegerField(null=True, default=0)
     ro_2 = models.IntegerField(null=True, default=0)        
+
