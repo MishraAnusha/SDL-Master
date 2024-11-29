@@ -48,6 +48,8 @@ urlpatterns = [
          views.import_csv, name='user_import_csv'),
     path('user_nodes/export_feeds_csv/<int:node_id>/',
          views.export_feeds_csv, name='user_export_feeds_csv'),
+    path('nodes/historical_data/<int:node_id>', 
+         views.get_historical_data, name='historical_data'),
 
 
 ]

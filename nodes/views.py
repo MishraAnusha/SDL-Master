@@ -217,6 +217,34 @@ def store_thingspeak_feeds(node_id, data):
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
 
+@login_required
+def get_historical_data(request, node_id):
+    try:
+        # Fetch historical data from the database
+        data = Feeds.objects.filter(node_id=node_id).order_by('-created_at')
+        
+        # Aggregate data for trend analysis (e.g., daily average)
+        df = pd.DataFrame(list(data.values()))
+        print("data valuesssss")
+        #print(data.values())
+        df['created_at'] = pd.to_datetime(df['created_at'])
+        print(df)
+        numeric_df = df.select_dtypes(include=['number'])
+        numeric_df = numeric_df.replace([np.inf, -np.inf], np.nan).fillna(0)
+        # Aggregate by day, you can also group by weeks or months
+        daily_avg = numeric_df.groupby(df['created_at'].dt.date).mean()
+        daily_avg.index = daily_avg.index.astype(str)
+        print("daily_avggggg")
+        print(daily_avg)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # Return JSON response for AJAX requests
+            return JsonResponse(daily_avg.to_dict(orient="index"), safe=False)
+        # Return the aggregated data as JSON for use in frontend
+        return render(request, 'nodes/historical_data.html', {'node_id': node_id})
+
+    except Feeds.DoesNotExist:
+        return JsonResponse({'error': 'No historical data found'}, status=404)
+    
 
 @login_required
 def get_feeds(request, node_id):
