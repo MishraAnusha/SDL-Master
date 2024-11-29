@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Impact Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .summary-container {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            margin: 10px;
+            flex: 1;
+            max-width: 300px;
+            min-width: 200px;
+        }
+
+        .summary-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-card span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .chart-container {
+            margin: 40px auto;
+            max-width: 800px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #loading {
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Disease Impact Analysis for Node {{ node_id }}</h1>
+    </header>
+
+    <main>
+        <!-- Summary Section -->
+        <div class="summary-container">
+            <div class="summary-card">
+                <h3>Disease Severity</h3>
+                <span id="disease-severity">{{ severity }}%</span>
+            </div>
+            <div class="summary-card">
+                <h3>AUDPC</h3>
+                <span id="audpc">{{ audpc }}</span>
+            </div>
+            <div class="summary-card">
+                <h3>Yield Loss (Linear Model)</h3>
+                <span id="yield-loss-linear">{{ yield_loss_linear }}%</span>
+            </div>
+            <div class="summary-card">
+                <h3>Yield Loss (AUDPC Model)</h3>
+                <span id="yield-loss-audpc">{{ yield_loss_audpc }}%</span>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <h3>Disease Severity Over Time</h3>
+            <canvas id="diseaseProgressionChart"></canvas>
+        </div>
+    </main>
+
+    <div id="loading" style="display: none;">Loading data, please wait...</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Pass the data directly into JavaScript
+            const labels = {{ time_points|safe }};  // Dates as an array
+            const data = {{ severity_data|safe }};  // Disease severity values as an array
+
+            if (labels.length === 0 || data.length === 0) {
+                alert("No data available for disease analysis.");
+                return;
+            }
+
+            // Render the Disease Severity Chart
+            const ctx = document.getElementById("diseaseProgressionChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Disease Severity (%)",
+                        data: data,
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        backgroundColor: "rgba(255, 99, 132, 0.2)",
+                        fill: true,
+                        tension: 0.3, // Smooth curve
+                        pointStyle: "circle",
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "top" },
+                        title: { display: true, text: "Disease Severity Over Time" }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: "Date" } },
+                        y: { title: { display: true, text: "Severity (%)" }, beginAtZero: true }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
