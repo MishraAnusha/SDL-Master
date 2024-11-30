@@ -61,12 +61,10 @@
                         </div>
                         <div class="card-footer">
                             <div class="row">
-                                <a href="historical_data/{{ val.id }}" class="col-3 btn transparent_btn" title="Chart">
+                                <a href="historical_data/{{ val.id }}" class="col-3 btn transparent_btn" title="Historical Trend">
                                     <i class="fa fa-line-chart"></i>
                                 </a>
-								 <a href="disease_analysis/{{val.id }}" class="btn btn-primary">
-									Disease Impact Analysis
-								</a>
+								
                                 <a href="get_feeds_table/{{ val.id }}" class="col-3 btn transparent_btn" title="Table">
                                     <i class="fa fa-table"></i>
                                 </a>
@@ -98,6 +96,9 @@
                                    data-id={{ val.id }} title="Refresh Node Data">
                                     <i class="fa-solid fa-arrows-rotate"></i>
                                 </a>
+								 <a href="disease_analysis/{{val.id }}" class="col-3 btn transparent_btn" title="Disease Impact">
+									<i class="fa fa-area-chart"></i>
+								</a>
                             </div>
                         </div>
                     </div>
