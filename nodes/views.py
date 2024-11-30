@@ -322,15 +322,19 @@ def get_disease_analysis(request, node_id):
 
         # Calculate AUDPC
         audpc = calculate_audpc(severity_data, time_points)
+        # Normalize AUDPC to a percentage
+        normalized_audpc = (audpc / (len(feeds) * 100)) * 100 if len(feeds) > 0 else 0
+        print(audpc)
+        print(normalized_audpc)
 
         # Calculate yield loss
         yield_loss_linear = calculate_linear_yield_loss(severity)
         yield_loss_audpc = calculate_audpc_yield_loss(audpc)
-        print("shkhkhkhkhkhkhkhkhkhkhkhkhkhkhkhkdj")
+        #print("shkhkhkhkhkhkhkhkhkhkhkhkhkhkhkhkdj")
         return render(request, 'nodes/disease_analysis.html', {
         'node_id': node_id,
         'severity': severity,
-        'audpc': audpc,
+        'audpc': normalized_audpc,
         'yield_loss_linear': yield_loss_linear,
         'yield_loss_audpc': yield_loss_audpc,
         'time_points': [feed.created_at.strftime('%Y-%m-%d') for feed in feeds] or [],  # Ensure list
