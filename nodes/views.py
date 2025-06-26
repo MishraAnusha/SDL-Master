@@ -137,14 +137,17 @@ def store_thingspeak_feeds(node_id, data):
         node = Nodes.objects.get(id=node_id)
         
         # Debug: Print received data
-        print("Received data:", data)
+        #print("Received data:", data)
         
         # Get the current time for the feed
         c_time = datetime.datetime.now(tz=timezone.utc)
         
         # Preprocess the feed data
+        print("before preprocess")
         dura = feeds_preprocess(node_id, float(data['field4']), c_time)  # Assuming field4 is LWS
+        print("after preprocess")
         gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
+        print("after gwc")
         
         # Debug: Print preprocessed data
         print("Preprocessed data:", dura, gwc)
