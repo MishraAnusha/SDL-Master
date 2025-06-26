@@ -135,6 +135,7 @@ def store_feeds(request):
 
 
 @csrf_exempt
+'''
 def store_thingspeak_feeds(node_id, data):
     try:
         # Fetch the node from the database
@@ -223,6 +224,85 @@ def store_thingspeak_feeds(node_id, data):
         return HttpResponse(status=404, content="Node does not exist.")
     except Exception as e:
         # Debug: Print exception details
+        print("Exception occurred:", str(e))
+        return HttpResponse(status=500, content=str(e))
+'''
+def store_thingspeak_feeds(node_id, data):
+    try:
+        # Fetch the node
+        node = Nodes.objects.get(id=node_id)
+
+        # Get the latest entry_id from Feeds for this node
+        last_feed = Feeds.objects.filter(node_id=node_id).order_by('-entry_id').first()
+        last_entry_id = last_feed.entry_id if last_feed else 0
+
+        # Filter only new feeds
+        new_feeds = [f for f in data['feeds'] if int(f['entry_id']) > last_entry_id]
+
+        if not new_feeds:
+            print("No new feeds to process.")
+            return HttpResponse("No new data to process.")
+
+        # Get image if available
+        gallery_entries = CropImage.objects.filter(node_id=node_id).order_by('-created_at')
+        image = None
+        now_time = datetime.datetime.now(tz=timezone.utc)
+        gallery_entry = next(
+            (entry for entry in gallery_entries if now_time.date() >= entry.created_at.date() >= (now_time.date() - datetime.timedelta(days=2))),
+            None
+        )
+        if gallery_entry and gallery_entry.image:
+            image = gallery_entry.image.read()
+
+        # Process each new feed
+        for feed in new_feeds:
+            c_time = datetime.datetime.strptime(feed['created_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+
+            # Preprocess duration and GWC
+            dura = feeds_preprocess(node_id, float(feed['field4']), c_time)
+            gwc = get_gwc(float(feed['field5']))
+
+            # Predict using numerical and image-based models
+            pred = predict_data(float(feed['field1']), float(feed['field2']), float(feed['field3']), dura['duration'], 0.0)
+            pred1 = predict_data1(feed['field1'], feed['field2'], feed['field3'], feed['field4'], feed['field5'], image_file=image)
+
+            # Save feed
+            f_data = Feeds(
+                node_id=node_id,
+                entry_id=int(feed['entry_id']),
+                feed_time=c_time,
+                temperature=float(feed['field1']),
+                humidity=float(feed['field2']),
+                LWS=float(feed['field4']),
+                soil_temperature=float(feed['field3']),
+                soil_moisture=float(feed['field5']),
+                battery_status=float(feed['field6']),
+                MVP=0,
+                MVS=0,
+                SVP=1,
+                SVS=0,
+                RO_1=1,
+                RO_2=1,
+                duration=dura['duration'],
+                GWC=gwc,
+                event=dura['event'],
+                powdery_mildew=pred['powdery_mildew'],
+                anthracnose=pred['anthracnose'],
+                root_rot=pred['root_rot'],
+                irrigation=pred['irrigation'],
+                health_status=pred1
+            )
+            f_data.save()
+
+            # Update last_feed_time for the node
+            node.last_feed_time = c_time
+            node.save()
+
+        return HttpResponse("New feeds processed successfully.")
+
+    except Nodes.DoesNotExist:
+        return HttpResponse(status=404, content="Node does not exist.")
+    except Exception as e:
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
 
