@@ -536,7 +536,7 @@ def get_last_data(request, node_id):
             return JsonResponse({'status': 'error', 'message': 'Node does not have valid ThingSpeak credentials.'}, status=400)
         
         # Construct the URL for ThingSpeak API
-        last_feed_url = f"https://api.thingspeak.com/channels/{node_data.channel_id}/feeds/last"
+        last_feed_url = f"https://api.thingspeak.com/channels/{node_data.channel_id}/feeds.json"
         lf_query = {'api_key': node_data.node_api_key}
         
         # Fetch data from ThingSpeak
