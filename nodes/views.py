@@ -238,7 +238,11 @@ def store_thingspeak_feeds(node_id, data):
         last_entry_id = last_feed.entry_id if last_feed else 0
 
         # Filter only new feeds
-        new_feeds = [f for f in data['feeds'] if int(f['entry_id']) > last_entry_id]
+        new_feeds = [
+    f for f in data['feeds']
+    if f.get('entry_id') is not None and int(f['entry_id']) > last_entry_id
+]
+
 
         if not new_feeds:
             print("No new feeds to process.")
