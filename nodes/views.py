@@ -262,7 +262,7 @@ def store_thingspeak_feeds(node_id, data):
         def parse_float_safe(val):
             try:
                 if val is None or str(val).lower() == "inf":
-                    return None
+                    return float(0)
                 return float(val)
             except (ValueError, TypeError):
                 return None
