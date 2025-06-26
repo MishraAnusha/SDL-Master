@@ -151,7 +151,7 @@ def store_thingspeak_feeds(node_id, data):
         print(data['feeds'][0]['field4'])
         dura = feeds_preprocess(node_id, float(data['feeds'][0]['field4']), c_time)  # Assuming field4 is LWS
         print("after preprocess")
-        gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
+        gwc = get_gwc(float(data['feeds'][0]['field5']))  # Assuming field5 is soil_moisture
         print("after gwc")
         
         # Debug: Print preprocessed data
@@ -175,12 +175,12 @@ def store_thingspeak_feeds(node_id, data):
 
         # Predict data with numerical values
         print("Before numerical prediction")
-        pred = predict_data(float(data['field1']), float(data['field2']), float(data['field3']), dura['duration'], 0.0)
+        pred = predict_data(float(data['feeds'][0]['field1']), float(data['feeds'][0]['field2']), float(data['feeds'][0]['field3']), dura['duration'], 0.0)
 
         # Predict using both numerical and image data if available
         print("Before image-based prediction")
         pred1 = predict_data1(
-            data['field1'], data['field2'], data['field3'], data['field4'], data['field5'], image_file=image
+            data['feeds'][0]['field1'], data['feeds'][0]['field2'], data['feeds'][0]['field3'], data['feeds'][0]['field4'], data['feeds'][0]['field5'], image_file=image
         )
 
         # Debug: Print predictions
@@ -189,12 +189,12 @@ def store_thingspeak_feeds(node_id, data):
         # Create and save feed data
         f_data = Feeds(
             node_id=node_id,
-            temperature=float(data['field1']),
-            humidity=float(data['field2']),
-            LWS=float(data['field4']),
-            soil_temperature=float(data['field3']),
-            soil_moisture=float(data['field5']),
-            battery_status=float(data['field6']),
+            temperature=float(data['feeds'][0]['field1']),
+            humidity=float(data['feeds'][0]['field2']),
+            LWS=float(data['feeds'][0]['field4']),
+            soil_temperature=float(data['feeds'][0]['field3']),
+            soil_moisture=float(data['feeds'][0]['field5']),
+            battery_status=float(data['feeds'][0]['field6']),
             MVP=0,
             MVS=0,
             SVP=1,
