@@ -134,7 +134,7 @@ def store_feeds(request):
     return HttpResponse()
 
 
-@csrf_exempt
+
 '''
 def store_thingspeak_feeds(node_id, data):
     try:
@@ -227,6 +227,7 @@ def store_thingspeak_feeds(node_id, data):
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
 '''
+@csrf_exempt
 def store_thingspeak_feeds(node_id, data):
     try:
         # Fetch the node
