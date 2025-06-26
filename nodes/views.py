@@ -33,6 +33,7 @@ import io
 # Create your views here.
 
 def feeds_preprocess(node_id, lws, c_time):
+    print("in preprocess")
     rec = Feeds.objects.filter(node_id=node_id).order_by('-id').values()
     print(rec)
     if not rec: 
