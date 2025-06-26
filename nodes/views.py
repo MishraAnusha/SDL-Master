@@ -34,12 +34,15 @@ import io
 
 def feeds_preprocess(node_id, lws, c_time):
     rec = Feeds.objects.filter(node_id=node_id).order_by('-id').values()
+    print(rec)
     if not rec: 
         return {'duration': 0, 'event': 0}
     last_rec = rec[0]
+    print(last_rec)
     timediff = c_time - last_rec['created_at']
     timediff = int((timediff.total_seconds()) / 3600)
     last_lws = last_rec['LWS']
+    print(last_lws)
     if (last_lws >= 46000) and (lws < 46000):
         # event starting point
         # TODO : change in last param and add duration in current param
