@@ -255,30 +255,52 @@ def store_thingspeak_feeds(node_id, data):
         if gallery_entry and gallery_entry.image:
             image = gallery_entry.image.read()
 
+        def parse_float_safe(val):
+            try:
+                if val is None or str(val).lower() == "inf":
+                    return None
+                return float(val)
+            except (ValueError, TypeError):
+                return None
+
+        def parse_int_safe(val):
+            try:
+                return int(val)
+            except (ValueError, TypeError):
+                return None
+
         # Process each new feed
         for feed in new_feeds:
             c_time = datetime.datetime.strptime(feed['created_at'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
 
+            temp = parse_float_safe(feed.get('field1'))
+            humid = parse_float_safe(feed.get('field2'))
+            soil_temp = parse_float_safe(feed.get('field3'))
+            lws = parse_float_safe(feed.get('field4'))
+            soil_moist = parse_float_safe(feed.get('field5'))
+            battery = parse_float_safe(feed.get('field6'))
+            mvp = parse_int_safe(feed.get('field7'))
+
             # Preprocess duration and GWC
-            dura = feeds_preprocess(node_id, float(feed['field4']), c_time)
-            gwc = get_gwc(float(feed['field5']))
+            dura = feeds_preprocess(node_id, lws, c_time)
+            gwc = get_gwc(soil_moist)
 
             # Predict using numerical and image-based models
-            pred = predict_data(float(feed['field1']), float(feed['field2']), float(feed['field3']), dura['duration'], 0.0)
-            pred1 = predict_data1(feed['field1'], feed['field2'], feed['field3'], feed['field4'], feed['field5'], image_file=image)
+            pred = predict_data(temp, humid, soil_temp, dura['duration'], 0.0)
+            pred1 = predict_data1(temp, humid, soil_temp, lws, soil_moist, image_file=image)
 
             # Save feed
             f_data = Feeds(
                 node_id=node_id,
                 entry_id=int(feed['entry_id']),
                 feed_time=c_time,
-                temperature=float(feed['field1']),
-                humidity=float(feed['field2']),
-                LWS=float(feed['field4']),
-                soil_temperature=float(feed['field3']),
-                soil_moisture=float(feed['field5']),
-                battery_status=float(feed['field6']),
-                MVP=0,
+                temperature=temp,
+                humidity=humid,
+                LWS=lws,
+                soil_temperature=soil_temp,
+                soil_moisture=soil_moist,
+                battery_status=battery,
+                MVP=mvp,
                 MVS=0,
                 SVP=1,
                 SVS=0,
@@ -306,6 +328,7 @@ def store_thingspeak_feeds(node_id, data):
     except Exception as e:
         print("Exception occurred:", str(e))
         return HttpResponse(status=500, content=str(e))
+
 
 @login_required
 def get_historical_data(request, node_id):
