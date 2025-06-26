@@ -149,7 +149,7 @@ def store_thingspeak_feeds(node_id, data):
         # Preprocess the feed data
         print("before preprocess")
         print(data['feeds'][0]['field4'])
-        dura = feeds_preprocess(node_id, float(data[0]['field4']), c_time)  # Assuming field4 is LWS
+        dura = feeds_preprocess(node_id, float(data['feeds'][0]['field4']), c_time)  # Assuming field4 is LWS
         print("after preprocess")
         gwc = get_gwc(float(data['field5']))  # Assuming field5 is soil_moisture
         print("after gwc")
