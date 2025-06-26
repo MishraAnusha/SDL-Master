@@ -297,7 +297,7 @@ def store_thingspeak_feeds(node_id, data):
             f_data = Feeds(
                 node_id=node_id,
                 entry_id=int(feed['entry_id']),
-                feed_time=c_time,
+                created_at=c_time,
                 temperature=temp,
                 humidity=humid,
                 LWS=lws,
