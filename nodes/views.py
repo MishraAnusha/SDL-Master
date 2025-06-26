@@ -235,12 +235,12 @@ def store_thingspeak_feeds(node_id, data):
 
         # Get the latest entry_id from Feeds for this node
         last_feed = Feeds.objects.filter(node_id=node_id).order_by('-entry_id').first()
-        last_entry_id = last_feed.entry_id if last_feed else 0
+        last_entry_id = last_feed.entry_id if last_feed and last_feed.entry_id is not None else 0
 
         # Filter only new feeds
         new_feeds = [
     f for f in data['feeds']
-    if f.get('entry_id') is not None and int(f['entry_id']) > last_entry_id
+    if f.get('entry_id') is not None and last_entry_id is not None and int(f['entry_id']) > last_entry_id
 ]
 
 
