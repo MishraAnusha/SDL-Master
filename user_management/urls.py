@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import re_path
 from django.contrib import admin
 from django.urls import path, include
 
@@ -9,5 +9,5 @@ urlpatterns = [
 
     path("nodes/", include('nodes.urls')),
 
-    url(r'^oauth/', include('social_django.urls', namespace='social')),
+    re_path(r'^oauth/', include('social_django.urls', namespace='social')),
 ]
